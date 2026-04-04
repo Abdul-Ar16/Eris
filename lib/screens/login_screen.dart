@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     // Title
                     const Text(
-                      'Disaster Alert',
+                      'ERIS',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 48,

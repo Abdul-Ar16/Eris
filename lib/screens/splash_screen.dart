@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(seconds: 4), () {
+    _timer = Timer(const Duration(seconds: 5), () {
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/login');
     });
@@ -53,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Disaster Alert',
+                  'ERIS',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 56,
@@ -72,7 +72,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Early warning system',
+                  'Disaster Early warning system',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 22,
