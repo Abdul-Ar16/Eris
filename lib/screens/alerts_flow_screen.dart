@@ -145,7 +145,7 @@ class _AlertsFlowScreenState extends State<AlertsFlowScreen> {
       iconColor: ErisColors.primary,
       extra: Column(
         children: [
-          const SizedBox(height: 32),
+          const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -159,6 +159,25 @@ class _AlertsFlowScreenState extends State<AlertsFlowScreen> {
                 const SizedBox(width: 16),
                 const Expanded(
                   child: Text('Allow Location Access', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+                Switch(value: true, onChanged: (v) {}, activeColor: ErisColors.primary),
+              ],
+            ),
+          ),
+          const SizedBox(height: 15),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: ErisColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white10),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.notifications, color: ErisColors.primary),
+                const SizedBox(width: 16),
+                const Expanded(
+                  child: Text('Allow Notification Access', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
                 Switch(value: true, onChanged: (v) {}, activeColor: ErisColors.primary),
               ],
@@ -189,39 +208,41 @@ class _OnboardingContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.1),
-              shape: BoxShape.circle,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 80, color: iconColor),
             ),
-            child: Icon(icon, size: 80, color: iconColor),
-          ),
-          const SizedBox(height: 48),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 1),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: iconColor, fontWeight: FontWeight.bold, letterSpacing: 2),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            description,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 16, color: Colors.white54, height: 1.5),
-          ),
-          if (extra != null) extra!,
-        ],
+            const SizedBox(height: 48),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 1),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: iconColor, fontWeight: FontWeight.bold, letterSpacing: 2),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              description,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16, color: Colors.white54, height: 1.5),
+            ),
+            if (extra != null) extra!,
+          ],
+        ),
       ),
     );
   }

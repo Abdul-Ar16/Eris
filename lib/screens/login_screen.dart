@@ -74,15 +74,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 60),
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Login to your account',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    const Text(
+                      'Login to your account',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 32),
