@@ -42,20 +42,57 @@ class EvacuationRouteScreen extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 18),
                 children: [
-                  Container(
-                    height: 220,
-                    decoration: BoxDecoration(
-                      color: Colors.white12,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: Colors.white24),
-                    ),
-                    child: const Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
+                  GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, '/map'),
+                    child: Container(
+                      height: 240,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0A1921),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: Colors.white24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Stack(
                         children: [
-                          Icon(Icons.map_outlined, color: Colors.white54, size: 44),
-                          SizedBox(height: 8),
-                          Text('Map preview (placeholder)', style: TextStyle(color: Colors.white60)),
+                          // Mock Map Background
+                          Positioned.fill(
+                            child: CustomPaint(
+                              painter: _MiniMapPainter(),
+                            ),
+                          ),
+                          // Markers
+                          const Positioned(
+                            top: 80,
+                            left: 100,
+                            child: _MapMarker(color: Color(0xFFE91E63)),
+                          ),
+                          const Positioned(
+                            top: 120,
+                            right: 80,
+                            child: _MapMarker(color: Color(0xFF2196F3), isCurrent: true),
+                          ),
+                          // Label
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              color: Colors.black45,
+                              child: const Text(
+                                'Tap to view full map',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.white70, fontSize: 12),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -119,6 +156,55 @@ class EvacuationRouteScreen extends StatelessWidget {
   }
 }
 
+class _MapMarker extends StatelessWidget {
+  final Color color;
+  final bool isCurrent;
+
+  const _MapMarker({required this.color, this.isCurrent = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (isCurrent)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.blue,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: const Text('You', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
+          ),
+        Icon(isCurrent ? Icons.my_location : Icons.location_on, color: color, size: 24),
+      ],
+    );
+  }
+}
+
+class _MiniMapPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withOpacity(0.1)
+      ..strokeWidth = 2.0
+      ..style = PaintingStyle.stroke;
+
+    final roadPath = Path();
+    roadPath.moveTo(0, size.height * 0.4);
+    roadPath.quadraticBezierTo(size.width * 0.3, size.height * 0.3, size.width * 0.5, size.height * 0.5);
+    roadPath.lineTo(size.width, size.height * 0.7);
+    
+    roadPath.moveTo(size.width * 0.2, 0);
+    roadPath.lineTo(size.width * 0.4, size.height);
+
+    canvas.drawPath(roadPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 class _ShelterCard extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -158,7 +244,7 @@ class _ShelterCard extends StatelessWidget {
                   children: [
                     Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14)),
                     const SizedBox(height: 4),
-                    Text(subtitle, style: TextStyle(color: Colors.white60, fontSize: 12)),
+                    Text(subtitle, style: const TextStyle(color: Colors.white60, fontSize: 12)),
                   ],
                 ),
               ),
@@ -197,4 +283,3 @@ class _ShelterCard extends StatelessWidget {
     );
   }
 }
-

@@ -9,6 +9,7 @@ import 'screens/monitor_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/emergency_sos_screen.dart';
+import 'screens/map_view_screen.dart';
 import 'theme/app_theme.dart';
 import 'widgets/bottom_nav_shell.dart';
 
@@ -31,9 +32,9 @@ class ErisApp extends StatelessWidget {
         '/profile': (_) => const ProfileScreen(),
         '/evacuation': (_) => const EvacuationRouteScreen(),
         '/sos': (_) => const EmergencySosScreen(),
+        '/map': (_) => const MapViewScreen(),
       },
       initialRoute: '/',
     );
   }
 }
-
