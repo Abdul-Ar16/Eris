@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -70,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: const Text(
-                        'EMIAL',
+                        'EMAIL',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -158,6 +159,27 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: const Text(
                         'Forgot Password?',
                         style: TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                    ),
+                    const SizedBox(height: 60),
+                    // SOS Button
+                    SizedBox(
+                      width: 200,
+                      height: 45,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context).pushNamed('/sos'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ErisColors.danger.withOpacity(0.9),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          'SOS EMERGENCY',
+                          style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.2),
+                        ),
                       ),
                     ),
                   ],
