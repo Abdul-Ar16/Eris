@@ -75,21 +75,14 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: ErisColors.primary, width: 1.5),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Text(
-                    'EARLY RESPONSE & INFORMATION SYSTEM',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
-                    ),
+                const Text(
+                  'Disaster Early Warning System',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
                   ),
                 ),
                 const SizedBox(height: 60),
