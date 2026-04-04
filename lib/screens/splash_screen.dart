@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(seconds: 5), () {
+    _timer = Timer(const Duration(seconds: 3), () {
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/login');
     });
@@ -30,20 +30,32 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Background Image
+          // Background Image with subtle scaling/opacity
           Positioned.fill(
-            child: Image.asset(
-              'assets/login_page_image.png',
-              fit: BoxFit.cover,
+            child: Opacity(
+              opacity: 0.6,
+              child: Image.asset(
+                'assets/login_page_image.png',
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-          // Gradient Overlay to ensure text readability if needed
+          // Dark Gradient Overlay
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.3),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.2),
+                    Colors.black.withOpacity(0.5),
+                    Colors.black,
+                  ],
+                ),
               ),
             ),
           ),
@@ -52,36 +64,59 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'ERIS',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 56,
+                    fontSize: 72,
                     color: Colors.white,
-                    fontWeight: FontWeight.w400,
-                    // Note: Ideally a custom brush font would be used here to match the UI
-                    letterSpacing: -1,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 10.0,
-                        color: Colors.black.withOpacity(0.5),
-                        offset: const Offset(2, 2),
-                      ),
-                    ],
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 4,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Disaster Early warning system',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 22,
-                    color: Colors.white.withOpacity(0.9),
-                    fontWeight: FontWeight.w300,
-                    letterSpacing: 0.5,
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: ErisColors.primary, width: 1.5),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text(
+                    'EARLY RESPONSE & INFORMATION SYSTEM',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 60),
+                const SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(ErisColors.primary),
                   ),
                 ),
               ],
+            ),
+          ),
+          // Bottom Version or Slogan
+          const Positioned(
+            bottom: 40,
+            left: 0,
+            right: 0,
+            child: Text(
+              'SAFETY FIRST • RESPONSE ALWAYS',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white24,
+                fontSize: 12,
+                letterSpacing: 2,
+              ),
             ),
           ),
         ],

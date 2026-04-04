@@ -7,176 +7,156 @@ class MapViewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A1921), // Dark map-like background
       body: Stack(
         children: [
           // Mock Map Background
           Positioned.fill(
             child: Container(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.center,
-                  radius: 1.5,
-                  colors: [
-                    const Color(0xFF1B3D4F).withOpacity(0.5),
-                    const Color(0xFF0A1921),
-                  ],
-                ),
-              ),
+              color: const Color(0xFF0D1117), // Deep space blue/black for map
               child: CustomPaint(
                 painter: _MapPainter(),
               ),
             ),
           ),
 
-          // Top UI (Search Bar and Chips)
+          // Top Navigation
           SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Row(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      IconButton(
+                      _MapActionButton(
+                        icon: Icons.arrow_back_ios_new_rounded,
                         onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
                       ),
-                      const Expanded(
-                        child: Text(
-                          'MAP',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Container(
+                          height: 54,
+                          decoration: BoxDecoration(
+                            color: ErisColors.surface,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.white10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          textAlign: TextAlign.center,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.search_rounded, color: ErisColors.primary),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  'Search for shelters or routes',
+                                  style: TextStyle(color: Colors.white38, fontSize: 14),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 48), // Spacer to balance back button
                     ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2D2D2D),
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: const Row(
+                  const SizedBox(height: 12),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
                       children: [
-                        Icon(Icons.location_on, color: Color(0xFF4285F4)),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Search here',
-                            style: TextStyle(color: Colors.white70, fontSize: 16),
-                          ),
-                        ),
-                        Icon(Icons.mic, color: Colors.white70),
-                        SizedBox(width: 12),
-                        CircleAvatar(
-                          radius: 14,
-                          backgroundColor: Colors.grey,
-                          child: Icon(Icons.person, size: 18, color: Colors.white),
-                        ),
+                        _FilterChip(label: 'Shelters', icon: Icons.home_rounded, isSelected: true),
+                        _FilterChip(label: 'Safe Zones', icon: Icons.shield_rounded),
+                        _FilterChip(label: 'Flooded Roads', icon: Icons.water_drop_rounded),
+                        _FilterChip(label: 'Medical', icon: Icons.medical_services_rounded),
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      _CategoryChip(icon: Icons.home, label: 'Home'),
-                      _CategoryChip(icon: Icons.restaurant, label: 'Restaurants'),
-                      _CategoryChip(icon: Icons.local_gas_station, label: 'Gas'),
-                      _CategoryChip(icon: Icons.attractions, label: 'Attractions'),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 
-          // Map Control Buttons
+          // Map Controls (Right Side)
           Positioned(
             right: 16,
-            bottom: 220,
+            top: MediaQuery.of(context).size.height * 0.3,
             child: Column(
               children: [
-                _MapControlButton(icon: Icons.layers_outlined),
+                _MapActionButton(icon: Icons.layers_rounded, onPressed: () {}),
                 const SizedBox(height: 12),
-                _MapControlButton(icon: Icons.my_location),
+                _MapActionButton(icon: Icons.my_location_rounded, onPressed: () {}),
                 const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF78D1E1),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Icon(Icons.directions, color: Colors.black, size: 28),
-                ),
+                _MapActionButton(icon: Icons.zoom_in_rounded, onPressed: () {}),
+                _MapActionButton(icon: Icons.zoom_out_rounded, onPressed: () {}),
               ],
             ),
           ),
 
-          // Local Vibe Bottom Sheet (Static for UI)
+          // Bottom Info Card
           Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
+            left: 16,
+            right: 16,
+            bottom: 30,
             child: Container(
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFF1A1A1A),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                color: ErisColors.surface,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.white10),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withOpacity(0.4),
                     blurRadius: 20,
+                    offset: const Offset(0, 10),
                   ),
                 ],
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(height: 12),
-                  Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.white24,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Local vibe',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: ErisColors.success.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ],
-                    ),
+                        child: const Icon(Icons.navigation_rounded, color: ErisColors.success),
+                      ),
+                      const SizedBox(width: 16),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Fastest Route to Shelter',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              '1.2 km • 14 mins via Flower Rd',
+                              style: TextStyle(color: Colors.white54, fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  _BottomNavMock(),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ErisColors.primary,
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    child: const Text('START NAVIGATION'),
+                  ),
                 ],
               ),
             ),
@@ -187,116 +167,65 @@ class MapViewScreen extends StatelessWidget {
   }
 }
 
-class _CategoryChip extends StatelessWidget {
+class _MapActionButton extends StatelessWidget {
   final IconData icon;
-  final String label;
+  final VoidCallback onPressed;
 
-  const _CategoryChip({required this.icon, required this.label});
+  const _MapActionButton({required this.icon, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          width: 54,
+          height: 54,
+          decoration: BoxDecoration(
+            color: ErisColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white10),
+          ),
+          child: Icon(icon, color: Colors.white, size: 22),
+        ),
+      ),
+    );
+  }
+}
+
+class _FilterChip extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool isSelected;
+
+  const _FilterChip({required this.label, required this.icon, this.isSelected = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(right: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFF2D2D2D),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white10),
+        color: isSelected ? ErisColors.primary : ErisColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isSelected ? Colors.transparent : Colors.white10),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: Colors.white70),
+          Icon(icon, size: 16, color: isSelected ? Colors.white : Colors.white54),
           const SizedBox(width: 8),
-          Text(label, style: const TextStyle(color: Colors.white, fontSize: 13)),
-        ],
-      ),
-    );
-  }
-}
-
-class _MapControlButton extends StatelessWidget {
-  final IconData icon;
-
-  const _MapControlButton({required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2D2D2D),
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 8,
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.white54,
+              fontSize: 13,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
           ),
         ],
       ),
-      child: Icon(icon, color: Colors.white70, size: 24),
-    );
-  }
-}
-
-class _BottomNavMock extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.white10)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _BottomNavItem(icon: Icons.location_on, label: 'Explore', isSelected: true),
-          _BottomNavItem(icon: Icons.bookmark_border, label: 'You'),
-          _BottomNavItem(icon: Icons.add_circle_outline, label: 'Contribute'),
-          _BottomNavItem(icon: Icons.business_center_outlined, label: 'Business'),
-        ],
-      ),
-    );
-  }
-}
-
-class _BottomNavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-
-  const _BottomNavItem({
-    required this.icon,
-    required this.label,
-    this.isSelected = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: isSelected
-              ? BoxDecoration(
-                  color: const Color(0xFF1E3A3A),
-                  borderRadius: BorderRadius.circular(16),
-                )
-              : null,
-          child: Icon(
-            icon,
-            color: isSelected ? const Color(0xFF78D1E1) : Colors.white54,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.white54,
-            fontSize: 11,
-          ),
-        ),
-      ],
     );
   }
 }
@@ -305,34 +234,47 @@ class _MapPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
+      ..color = Colors.white.withOpacity(0.03)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 
-    // Draw some random lines to simulate roads
-    for (var i = 0; i < 15; i++) {
-      canvas.drawLine(
-        Offset(0, size.height * (i / 15)),
-        Offset(size.width, size.height * (i / 15 + 0.1)),
-        paint,
-      );
-      canvas.drawLine(
-        Offset(size.width * (i / 15), 0),
-        Offset(size.width * (i / 15 - 0.1), size.height),
-        paint,
-      );
+    // Grid lines
+    for (double i = 0; i < size.width; i += 40) {
+      canvas.drawLine(Offset(i, 0), Offset(i, size.height), paint);
+    }
+    for (double i = 0; i < size.height; i += 40) {
+      canvas.drawLine(Offset(0, i), Offset(size.width, i), paint);
     }
 
-    // Draw a "Sri Lanka" like shape roughly
-    final landPaint = Paint()
-      ..color = const Color(0xFF1B3D4F).withOpacity(0.3)
+    // Main Roads
+    final roadPaint = Paint()
+      ..color = Colors.white.withOpacity(0.1)
+      ..strokeWidth = 3.0
+      ..style = PaintingStyle.stroke;
+
+    final path = Path();
+    path.moveTo(size.width * 0.2, 0);
+    path.lineTo(size.width * 0.3, size.height * 0.4);
+    path.quadraticBezierTo(size.width * 0.4, size.height * 0.6, size.width * 0.8, size.height);
+
+    path.moveTo(0, size.height * 0.3);
+    path.lineTo(size.width, size.height * 0.25);
+
+    canvas.drawPath(path, roadPaint);
+
+    // Hazard Area
+    final hazardPaint = Paint()
+      ..color = ErisColors.riskHigh.withOpacity(0.15)
       ..style = PaintingStyle.fill;
     
-    final path = Path();
-    path.moveTo(size.width * 0.5, size.height * 0.3);
-    path.quadraticBezierTo(size.width * 0.7, size.height * 0.5, size.width * 0.5, size.height * 0.8);
-    path.quadraticBezierTo(size.width * 0.3, size.height * 0.5, size.width * 0.5, size.height * 0.3);
-    canvas.drawPath(path, landPaint);
+    canvas.drawCircle(Offset(size.width * 0.7, size.height * 0.4), 80, hazardPaint);
+    
+    // Markers
+    final markerPaint = Paint()..color = ErisColors.primary;
+    canvas.drawCircle(Offset(size.width * 0.3, size.height * 0.4), 6, markerPaint);
+    
+    final shelterPaint = Paint()..color = ErisColors.success;
+    canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.8), 8, shelterPaint);
   }
 
   @override

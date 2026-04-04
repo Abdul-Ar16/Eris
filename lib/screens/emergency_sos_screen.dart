@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../theme/app_theme.dart';
 
 class EmergencySosScreen extends StatelessWidget {
@@ -8,117 +7,162 @@ class EmergencySosScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ErisColors.background,
+      appBar: AppBar(
+        title: const Text('EMERGENCY SOS'),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).maybePop(),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+        ),
+      ),
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              child: Row(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).maybePop(),
-                    icon: const Icon(Icons.arrow_back, color: Colors.white54),
-                  ),
-                  const SizedBox(width: 6),
-                  const Expanded(
-                    child: Text(
-                      'EMERGENCY',
-                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900),
+                  Text(
+                    'Emergency Assistance',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.settings_outlined, color: Colors.white54),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Your precise location will be shared with emergency services and your primary contacts immediately.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.white60,
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18),
-              child: const Text(
-                'Emergency Help',
-                style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w900),
-              ),
-            ),
-            const SizedBox(height: 6),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18),
-              child: const Text(
-                'Your location will be shared instantly',
-                style: TextStyle(color: Colors.white54, fontSize: 12),
-              ),
-            ),
-            const SizedBox(height: 18),
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'SOS',
-                      style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w900, letterSpacing: 0.2),
-                    ),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      width: 160,
-                      height: 160,
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ErisColors.danger,
-                          shape: const CircleBorder(),
-                          elevation: 8,
-                        ),
-                        child: const Text(
-                          'SOS',
-                          style: TextStyle(color: Colors.white, fontSize: 38, fontWeight: FontWeight.w900),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Press to activate SOS',
-                      style: TextStyle(color: Colors.white60, fontSize: 12),
-                    ),
-                    const SizedBox(height: 14),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 18),
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Colors.white10,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white24),
-                      ),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Emergency Contacts',
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 12),
-                          ),
-                          SizedBox(height: 8),
-                          Text('•  Police 119', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                          SizedBox(height: 6),
-                          Text('•  Fire 110', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                          SizedBox(height: 6),
-                          Text('•  Ambulance 110', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                          SizedBox(height: 6),
-                          Text('•  Your local center', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                        ],
-                      ),
-                    ),
-                  ],
+            const Spacer(),
+            // Animated SOS Button Container
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                // Outer Ripple Effect (Static for now, but implies animation)
+                Container(
+                  width: 280,
+                  height: 280,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: ErisColors.danger.withOpacity(0.05),
+                  ),
                 ),
+                Container(
+                  width: 220,
+                  height: 220,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: ErisColors.danger.withOpacity(0.1),
+                  ),
+                ),
+                // Main Button
+                GestureDetector(
+                  onTap: () {
+                    // SOS Logic
+                  },
+                  child: Container(
+                    width: 160,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: ErisColors.danger,
+                      boxShadow: [
+                        BoxShadow(
+                          color: ErisColors.danger.withOpacity(0.5),
+                          blurRadius: 30,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'SOS',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 48,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Press and hold for 3 seconds',
+              style: TextStyle(color: Colors.white38, fontSize: 13),
+            ),
+            const Spacer(),
+            // Emergency Contacts Card
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: ErisColors.surface,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.white10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.contact_phone_rounded, color: ErisColors.primary, size: 20),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Quick Dial',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  _buildEmergencyContact('Police', '119', Icons.local_police_rounded),
+                  const Divider(height: 24, color: Colors.white10),
+                  _buildEmergencyContact('Ambulance', '110', Icons.medical_services_rounded),
+                  const Divider(height: 24, color: Colors.white10),
+                  _buildEmergencyContact('Fire Brigade', '110', Icons.fire_truck_rounded),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
           ],
         ),
       ),
     );
   }
-}
 
+  Widget _buildEmergencyContact(String label, String number, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.white38, size: 20),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+              Text(number, style: const TextStyle(color: Colors.white54, fontSize: 13)),
+            ],
+          ),
+        ),
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.call_rounded, color: Colors.greenAccent),
+          style: IconButton.styleFrom(
+            backgroundColor: Colors.white.withOpacity(0.05),
+          ),
+        ),
+      ],
+    );
+  }
+}

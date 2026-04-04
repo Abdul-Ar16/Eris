@@ -1,7 +1,4 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
-
 import '../theme/app_theme.dart';
 
 class MonitorScreen extends StatelessWidget {
@@ -12,59 +9,49 @@ class MonitorScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: ErisColors.background,
-        body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        appBar: AppBar(
+          title: const Text('REAL-TIME MONITOR'),
+          bottom: TabBar(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            indicatorSize: TabBarIndicatorSize.tab,
+            indicator: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: ErisColors.primary.withOpacity(0.1),
+            ),
+            dividerColor: Colors.transparent,
+            labelColor: ErisColors.primary,
+            unselectedLabelColor: Colors.white38,
+            tabs: const [
+              Tab(
+                height: 45,
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // IconButton(
-                    //   onPressed: () {},
-                    //   icon: const Icon(Icons.arrow_back, color: Colors.white54),
-                    // ),
-                    const SizedBox(width: 4),
-                    const Expanded(
-                      child: Text(
-                        'MONITOR',
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.settings_outlined, color: Colors.white54),
-                    ),
+                    Icon(Icons.water_drop_rounded, size: 18),
+                    SizedBox(width: 8),
+                    Text('FLOOD'),
                   ],
                 ),
               ),
-              const TabBar(
-                padding: EdgeInsets.symmetric(horizontal: 18),
-                tabs: [
-                  Tab(
-                    icon: Icon(Icons.water_drop_outlined),
-                    child: Text('FLOOD'),
-                  ),
-                  Tab(
-                    icon: Icon(Icons.terrain_outlined),
-                    child: Text('LANDSLIDE'),
-                  ),
-                ],
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.white54,
-                indicatorColor: ErisColors.primary,
-              ),
-              const SizedBox(height: 14),
-              const Expanded(
-                child: TabBarView(
+              Tab(
+                height: 45,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _FloodMonitoringView(),
-                    _LandslideMonitoringView(),
+                    Icon(Icons.landscape_rounded, size: 18),
+                    SizedBox(width: 8),
+                    Text('LANDSLIDE'),
                   ],
                 ),
               ),
             ],
           ),
+        ),
+        body: const TabBarView(
+          children: [
+            _FloodMonitoringView(),
+            _LandslideMonitoringView(),
+          ],
         ),
       ),
     );
@@ -77,47 +64,38 @@ class _FloodMonitoringView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 18),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _RiskSummaryCard(
             label: 'CURRENT RISK LEVEL',
-            levelText: 'High',
+            levelText: 'HIGH RISK',
             levelColor: ErisColors.riskHigh,
+            description: 'Intense rainfall expected in the next 3 hours.',
           ),
-          const SizedBox(height: 14),
-          _MetricBar(
-            label: 'Wind Speed',
-            valueText: '45 km/h',
-            progress: 0.78,
+          const SizedBox(height: 24),
+          const Text(
+            'Environmental Metrics',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          const SizedBox(height: 10),
-          _MetricBar(
-            label: 'Rainfall',
-            valueText: '28 mm',
-            progress: 0.62,
+          const SizedBox(height: 16),
+          const _MetricGrid(
+            metrics: [
+              _MetricItem(label: 'Wind Speed', value: '45 km/h', progress: 0.78, icon: Icons.air_rounded),
+              _MetricItem(label: 'Rainfall', value: '28 mm', progress: 0.62, icon: Icons.umbrella_rounded),
+              _MetricItem(label: 'Pressure', value: '1008 hPa', progress: 0.42, icon: Icons.compress_rounded),
+              _MetricItem(label: 'Humidity', value: '82%', progress: 0.68, icon: Icons.water_rounded),
+            ],
           ),
-          const SizedBox(height: 10),
-          _MetricBar(
-            label: 'Rainfall',
-            valueText: '1008 hPa',
-            progress: 0.42,
-          ),
-          const SizedBox(height: 10),
-          _MetricBar(
-            label: 'Humidity',
-            valueText: '82%',
-            progress: 0.68,
-          ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 32),
           const _SafetyInstructions(
-            title: 'SAFETY INSTRUCTIONS',
+            title: 'IMMEDIATE ACTIONS',
             bullets: [
-              'Secure loose items',
-              'Close windows and doors',
-              'Stay indoors',
-              'Keep emergency kit ready',
+              'Move valuable items to higher ground',
+              'Disconnect all electrical appliances',
+              'Ensure your emergency kit is accessible',
+              'Stay tuned to local news for evacuation orders',
             ],
           ),
         ],
@@ -132,47 +110,38 @@ class _LandslideMonitoringView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 18),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _RiskSummaryCard(
             label: 'CURRENT RISK LEVEL',
-            levelText: 'Medium',
+            levelText: 'MODERATE',
             levelColor: ErisColors.riskMedium,
+            description: 'Soil saturation levels are increasing. Stay alert.',
           ),
-          const SizedBox(height: 14),
-          _MetricBar(
-            label: 'Soil Moisture',
-            valueText: '45 km/h',
-            progress: 0.54,
+          const SizedBox(height: 24),
+          const Text(
+            'Environmental Metrics',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          const SizedBox(height: 10),
-          _MetricBar(
-            label: 'Slope Angle',
-            valueText: '30°',
-            progress: 0.4,
+          const SizedBox(height: 16),
+          const _MetricGrid(
+            metrics: [
+              _MetricItem(label: 'Soil Moisture', value: '64%', progress: 0.64, icon: Icons.opacity_rounded),
+              _MetricItem(label: 'Slope Angle', value: '32°', progress: 0.4, icon: Icons.architecture_rounded),
+              _MetricItem(label: 'Ground Vib.', value: '2.4 Hz', progress: 0.35, icon: Icons.vibration_rounded),
+              _MetricItem(label: 'Recent Rain', value: '12 mm', progress: 0.48, icon: Icons.cloud_outlined),
+            ],
           ),
-          const SizedBox(height: 10),
-          _MetricBar(
-            label: 'Rainfall',
-            valueText: '28 mm',
-            progress: 0.48,
-          ),
-          const SizedBox(height: 10),
-          _MetricBar(
-            label: 'Seismic Activity',
-            valueText: '2.0',
-            progress: 0.22,
-          ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 32),
           const _SafetyInstructions(
-            title: 'SAFETY INSTRUCTIONS',
+            title: 'SAFETY PROTOCOLS',
             bullets: [
-              'Evacuate if advised',
-              'Avoid steep slopes and unstable ground',
-              'Stay alert and listen to local authorities',
-              'Keep emergency kit ready',
+              'Monitor for new cracks in building foundations',
+              'Avoid driving near steep mountain slopes',
+              'Watch for sudden water level changes in streams',
+              'Identify multiple evacuation routes',
             ],
           ),
         ],
@@ -185,39 +154,46 @@ class _RiskSummaryCard extends StatelessWidget {
   final String label;
   final String levelText;
   final Color levelColor;
+  final String description;
 
   const _RiskSummaryCard({
     required this.label,
     required this.levelText,
     required this.levelColor,
+    required this.description,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white10,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white24),
+        color: ErisColors.surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white10),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white60, fontSize: 12, fontWeight: FontWeight.w800)),
-          const SizedBox(height: 10),
-          Container(
-            alignment: Alignment.center,
-            width: 110,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: levelColor.withOpacity(0.85),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              levelText,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(color: Colors.white54, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1),
+              ),
+              Icon(Icons.shield_rounded, color: levelColor.withOpacity(0.5), size: 20),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            levelText,
+            style: TextStyle(color: levelColor, fontSize: 32, fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            description,
+            style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
           ),
         ],
       ),
@@ -225,39 +201,72 @@ class _RiskSummaryCard extends StatelessWidget {
   }
 }
 
-class _MetricBar extends StatelessWidget {
-  final String label;
-  final String valueText;
-  final double progress; // 0..1
+class _MetricGrid extends StatelessWidget {
+  final List<_MetricItem> metrics;
 
-  const _MetricBar({
+  const _MetricGrid({required this.metrics});
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 16,
+      childAspectRatio: 1.1,
+      children: metrics,
+    );
+  }
+}
+
+class _MetricItem extends StatelessWidget {
+  final String label;
+  final String value;
+  final double progress;
+  final IconData icon;
+
+  const _MetricItem({
     required this.label,
-    required this.valueText,
+    required this.value,
     required this.progress,
+    required this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white10,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white12),
+        color: ErisColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w700)),
-          const SizedBox(height: 8),
-          LinearProgressIndicator(
-            value: progress.clamp(0.0, 1.0),
-            backgroundColor: Colors.white12,
-            color: ErisColors.primary,
-            minHeight: 6,
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: ErisColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 18, color: ErisColors.primary),
           ),
-          const SizedBox(height: 8),
-          Text(valueText, style: const TextStyle(color: Colors.white60, fontSize: 12)),
+          const Spacer(),
+          Text(value, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text(label, style: const TextStyle(color: Colors.white38, fontSize: 12)),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: progress,
+              backgroundColor: Colors.white10,
+              color: ErisColors.primary,
+              minHeight: 4,
+            ),
+          ),
         ],
       ),
     );
@@ -276,32 +285,41 @@ class _SafetyInstructions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.35),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white24),
+        color: ErisColors.primary.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: ErisColors.primary.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w900)),
-          const SizedBox(height: 10),
+          Row(
+            children: [
+              const Icon(Icons.info_outline_rounded, color: ErisColors.primary, size: 20),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
           ...bullets.map(
             (b) => Padding(
-              padding: const EdgeInsets.only(bottom: 6),
+              padding: const EdgeInsets.only(bottom: 12),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Padding(
-                    padding: EdgeInsets.only(top: 2),
-                    child: Icon(Icons.check_circle_outline, size: 16, color: Colors.white54),
+                    padding: EdgeInsets.only(top: 4),
+                    child: Icon(Icons.check_circle_rounded, size: 14, color: ErisColors.primary),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       b,
-                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                      style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
                     ),
                   ),
                 ],
@@ -313,4 +331,3 @@ class _SafetyInstructions extends StatelessWidget {
     );
   }
 }
-

@@ -1,7 +1,4 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
-
 import '../theme/app_theme.dart';
 
 class EvacuationRouteScreen extends StatelessWidget {
@@ -10,276 +7,246 @@ class EvacuationRouteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ErisColors.background,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).maybePop(),
-                    icon: const Icon(Icons.arrow_back, color: Colors.white54),
-                  ),
-                  const SizedBox(width: 4),
-                  const Expanded(
-                    child: Text(
-                      'EVACUATION ROUTE',
-                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.settings_outlined, color: Colors.white54),
-                  ),
-                ],
+      appBar: AppBar(
+        title: const Text('EVACUATION ROUTES'),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).maybePop(),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          // Map Preview
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/map'),
+            child: Container(
+              height: 240,
+              decoration: BoxDecoration(
+                color: ErisColors.surface,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.white10),
+                image: const DecorationImage(
+                  image: AssetImage('assets/map_preview.png'), // Add this to assets if possible, or keep mock
+                  fit: BoxFit.cover,
+                  opacity: 0.5,
+                ),
               ),
-            ),
-            const SizedBox(height: 6),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 18),
+              child: Stack(
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, '/map'),
-                    child: Container(
-                      height: 240,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0A1921),
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: Colors.white24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: Stack(
-                        children: [
-                          // Mock Map Background
-                          Positioned.fill(
-                            child: CustomPaint(
-                              painter: _MiniMapPainter(),
-                            ),
-                          ),
-                          // Markers
-                          const Positioned(
-                            top: 80,
-                            left: 100,
-                            child: _MapMarker(color: Color(0xFFE91E63)),
-                          ),
-                          const Positioned(
-                            top: 120,
-                            right: 80,
-                            child: _MapMarker(color: Color(0xFF2196F3), isCurrent: true),
-                          ),
-                          // Label
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              color: Colors.black45,
-                              child: const Text(
-                                'Tap to view full map',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white70, fontSize: 12),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  _ShelterCard(
-                    title: 'Narahanpita School',
-                    subtitle: 'School',
-                    capacityText: 'Capacity: 500 people',
-                    distanceText: '2.3 km away',
-                    actionText: 'Get Directions',
-                    accent: const Color(0xFF2F6D3A),
-                  ),
-                  const SizedBox(height: 12),
-                  _ShelterCard(
-                    title: 'Community Hall',
-                    subtitle: 'Community Hall',
-                    capacityText: 'Capacity: 300 people',
-                    distanceText: '3.8 km away',
-                    actionText: 'Get Directions',
-                    accent: const Color(0xFF7D2D2D),
-                  ),
-                  const SizedBox(height: 18),
-                  const Text(
-                    'ROUTE SAFETY',
-                    style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 0.3),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.35),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: Colors.white24),
-                    ),
-                    child: Row(
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Expanded(
-                          child: Text('Road Clear', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w600)),
-                        ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2F7A40).withOpacity(0.25),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: const Color(0xFF2F7A40)),
+                            color: ErisColors.primary.withOpacity(0.2),
+                            shape: BoxShape.circle,
                           ),
-                          child: const Text('SAFE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 12)),
+                          child: const Icon(Icons.map_rounded, color: ErisColors.primary, size: 32),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Tap to Expand Map',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  Positioned(
+                    bottom: 16,
+                    right: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(20),
+                        // backdropFilter: const ColorFilter.mode(Colors.black26, BlendMode.darken),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.gps_fixed_rounded, color: ErisColors.primary, size: 14),
+                          SizedBox(width: 6),
+                          Text('LIVE TRACKING', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 24),
+          
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Nearby Shelters',
+                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              TextButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.filter_list_rounded, size: 16),
+                label: const Text('Filter'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          _ShelterCard(
+            title: 'Narahanpita High School',
+            type: 'Primary Shelter',
+            capacity: '450/500 available',
+            distance: '1.2 km',
+            time: '15 mins walk',
+            status: 'SAFE ROUTE',
+            statusColor: ErisColors.success,
+          ),
+          const SizedBox(height: 16),
+          _ShelterCard(
+            title: 'City Community Center',
+            type: 'Emergency Shelter',
+            capacity: '120/300 available',
+            distance: '2.8 km',
+            time: '8 mins drive',
+            status: 'CONGESTED',
+            statusColor: ErisColors.warning,
+          ),
+          const SizedBox(height: 24),
+          
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: ErisColors.riskHigh.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: ErisColors.riskHigh.withOpacity(0.2)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.warning_rounded, color: ErisColors.riskHigh),
+                const SizedBox(width: 16),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Route Advisory',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Baseline Road is currently flooded. Avoid this path.',
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _MapMarker extends StatelessWidget {
-  final Color color;
-  final bool isCurrent;
-
-  const _MapMarker({required this.color, this.isCurrent = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (isCurrent)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: const Text('You', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
-          ),
-        Icon(isCurrent ? Icons.my_location : Icons.location_on, color: color, size: 24),
-      ],
-    );
-  }
-}
-
-class _MiniMapPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
-      ..strokeWidth = 2.0
-      ..style = PaintingStyle.stroke;
-
-    final roadPath = Path();
-    roadPath.moveTo(0, size.height * 0.4);
-    roadPath.quadraticBezierTo(size.width * 0.3, size.height * 0.3, size.width * 0.5, size.height * 0.5);
-    roadPath.lineTo(size.width, size.height * 0.7);
-    
-    roadPath.moveTo(size.width * 0.2, 0);
-    roadPath.lineTo(size.width * 0.4, size.height);
-
-    canvas.drawPath(roadPath, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
 class _ShelterCard extends StatelessWidget {
   final String title;
-  final String subtitle;
-  final String capacityText;
-  final String distanceText;
-  final String actionText;
-  final Color accent;
+  final String type;
+  final String capacity;
+  final String distance;
+  final String time;
+  final String status;
+  final Color statusColor;
 
   const _ShelterCard({
     required this.title,
-    required this.subtitle,
-    required this.capacityText,
-    required this.distanceText,
-    required this.actionText,
-    required this.accent,
+    required this.type,
+    required this.capacity,
+    required this.distance,
+    required this.time,
+    required this.status,
+    required this.statusColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white10,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white24),
+        color: ErisColors.surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white10),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.location_on_outlined, size: 18, color: accent),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14)),
-                    const SizedBox(height: 4),
-                    Text(subtitle, style: const TextStyle(color: Colors.white60, fontSize: 12)),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: statusColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        status,
+                        style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                      ),
+                    ),
+                    Text(distance, style: const TextStyle(color: ErisColors.primary, fontWeight: FontWeight.bold)),
                   ],
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: accent.withOpacity(0.25),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: accent.withOpacity(0.65)),
+                const SizedBox(height: 12),
+                Text(title, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(type, style: const TextStyle(color: Colors.white38, fontSize: 13)),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    _buildInfo(Icons.people_outline_rounded, capacity),
+                    const SizedBox(width: 20),
+                    _buildInfo(Icons.directions_walk_rounded, time),
+                  ],
                 ),
-                child: const Text(
-                  'AVAILABLE',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 11),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-          const SizedBox(height: 10),
-          Text(capacityText, style: const TextStyle(color: Colors.white70, fontSize: 12)),
-          const SizedBox(height: 2),
-          Text(distanceText, style: const TextStyle(color: Colors.white70, fontSize: 12)),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: accent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          InkWell(
+            onTap: () {},
+            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                color: ErisColors.primary.withOpacity(0.1),
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
               ),
-              child: Text(actionText, style: const TextStyle(fontWeight: FontWeight.w900)),
+              child: const Center(
+                child: Text(
+                  'GET DIRECTIONS',
+                  style: TextStyle(color: ErisColors.primary, fontWeight: FontWeight.bold, letterSpacing: 1),
+                ),
+              ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildInfo(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Colors.white38),
+        const SizedBox(width: 6),
+        Text(text, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+      ],
     );
   }
 }

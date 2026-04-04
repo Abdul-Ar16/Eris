@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class AlertsFlowScreen extends StatefulWidget {
   const AlertsFlowScreen({super.key});
@@ -14,25 +15,37 @@ class _AlertsFlowScreenState extends State<AlertsFlowScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       body: SafeArea(
         child: Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 10, top: 10),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: BackButton(color: Colors.white24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (_currentPage > 0)
+                    IconButton(
+                      onPressed: () => _pageController.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      ),
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                    )
+                  else
+                    const SizedBox(width: 48),
+                  TextButton(
+                    onPressed: () {
+                      // Skip or finish logic
+                    },
+                    child: const Text('Skip', style: TextStyle(color: Colors.white38)),
+                  ),
+                ],
               ),
             ),
             Expanded(
               child: PageView(
                 controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                  });
-                },
+                onPageChanged: (index) => setState(() => _currentPage = index),
                 children: [
                   _buildFirstPage(),
                   _buildSecondPage(),
@@ -40,167 +53,83 @@ class _AlertsFlowScreenState extends State<AlertsFlowScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
-            _buildPageIndicator(),
-            const SizedBox(height: 20),
-            _buildNextButton(),
-            const SizedBox(height: 10),
-            if (_currentPage == 0)
-              const Text(
-                'Already have an account? Log in',
-                style: TextStyle(color: Colors.white, fontSize: 12),
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(3, (index) => _buildDot(index)),
+                  ),
+                  const SizedBox(height: 32),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_currentPage < 2) {
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      } else {
+                        // Finish
+                      }
+                    },
+                    child: Text(_currentPage == 2 ? 'GET STARTED' : 'CONTINUE'),
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
-            const SizedBox(height: 20),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildFirstPage() {
-    return Center(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(25),
-                decoration: const BoxDecoration(
-                  color: Color(0xFF3E190B),
-                  shape: BoxShape.circle,
-                ),
-                child: const Text('🚨', style: TextStyle(fontSize: 60)),
-              ),
-              const SizedBox(height: 60),
-              const Text(
-                'DISASTER ALERT',
-                style: TextStyle(
-                  color: Color(0xFFD9B067),
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'EARLY WARNING SYSTEM',
-                style: TextStyle(
-                  color: Color(0xFFBC6C33),
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 40),
-              const Text(
-                'Stay ahead of floods and landslides. Get real-time alerts, evacuation routes, and safety guidance — right on your phone.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  height: 1.4,
-                ),
-              ),
-            ],
-          ),
-        ),
+  Widget _buildDot(int index) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      margin: const EdgeInsets.only(right: 8),
+      height: 8,
+      width: _currentPage == index ? 24 : 8,
+      decoration: BoxDecoration(
+        color: _currentPage == index ? ErisColors.primary : Colors.white12,
+        borderRadius: BorderRadius.circular(4),
       ),
+    );
+  }
+
+  Widget _buildFirstPage() {
+    return _OnboardingContent(
+      title: 'DISASTER ALERT',
+      subtitle: 'EARLY WARNING SYSTEM',
+      description: 'Stay ahead of floods and landslides. Get real-time alerts, evacuation routes, and safety guidance.',
+      icon: Icons.emergency_share_rounded,
+      iconColor: ErisColors.danger,
     );
   }
 
   Widget _buildSecondPage() {
-    return Center(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(25),
-                decoration: const BoxDecoration(
-                  color: Color(0xFF232D3F),
-                  shape: BoxShape.circle,
-                ),
-                child: const Text('🔔', style: TextStyle(fontSize: 60)),
-              ),
-              const SizedBox(height: 60),
-              const Text(
-                'REAL-TIME ALERTS',
-                style: TextStyle(
-                  color: Color(0xFFD9B067),
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.blue,
-                  decorationThickness: 2,
-                ),
-              ),
-              const SizedBox(height: 40),
-              const Text(
-                'The moment our sensors detect rising water levels or unstable soil conditions, you’ll be the first to know - even before it happens',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 40),
-              _buildAlertCard(
-                '🌊',
-                'Flood risk detected - Colombo 05',
-                'HIGH',
-                const Color(0xFF3E190B),
-                const Color(0xFFB13131),
-              ),
-              const SizedBox(height: 15),
-              _buildAlertCard(
-                '⛰️',
-                'Landslide warning - Kandy Hills',
-                'MED',
-                const Color(0xFF342A1E),
-                const Color(0xFFBC6C33),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAlertCard(String emoji, String text, String tag, Color bgColor, Color tagTextColor) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF262626),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
+    return _OnboardingContent(
+      title: 'REAL-TIME ALERTS',
+      subtitle: 'STAY INFORMED',
+      description: 'The moment our sensors detect rising water levels or unstable soil conditions, you\'ll be the first to know.',
+      icon: Icons.notifications_active_rounded,
+      iconColor: ErisColors.warning,
+      extra: Column(
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 24)),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(color: Colors.white, fontSize: 16),
-            ),
+          const SizedBox(height: 32),
+          _AlertPreviewCard(
+            title: 'Flood risk detected',
+            location: 'Colombo 05',
+            severity: 'HIGH',
+            color: ErisColors.riskHigh,
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              tag,
-              style: TextStyle(
-                color: tagTextColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
+          const SizedBox(height: 12),
+          _AlertPreviewCard(
+            title: 'Landslide warning',
+            location: 'Kandy Hills',
+            severity: 'MED',
+            color: ErisColors.riskMedium,
           ),
         ],
       ),
@@ -208,150 +137,139 @@ class _AlertsFlowScreenState extends State<AlertsFlowScreen> {
   }
 
   Widget _buildThirdPage() {
-    return Center(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(25),
-                decoration: const BoxDecoration(
-                  color: Color(0xFF1E2E20),
-                  shape: BoxShape.circle,
-                ),
-                child: const Text('📍', style: TextStyle(fontSize: 60)),
-              ),
-              const SizedBox(height: 60),
-              const Text(
-                'ENABLE LOCATION',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'We need your location to send you alerts that are specific to your area and show you the nearest evacuation shelters.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 40),
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF262626),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: [
-                    _buildSwitchRow('📍', 'Allow Location Access'),
-                    const Divider(color: Colors.white24, height: 1),
-                    _buildSwitchRow('🔔', 'Allow Location Access'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSwitchRow(String emoji, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Row(
+    return _OnboardingContent(
+      title: 'STAY SAFE',
+      subtitle: 'PRECISE LOCATION',
+      description: 'We need your location to send you alerts specific to your area and show the nearest shelters.',
+      icon: Icons.location_on_rounded,
+      iconColor: ErisColors.primary,
+      extra: Column(
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 24)),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(color: Colors.white, fontSize: 16),
+          const SizedBox(height: 32),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: ErisColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white10),
             ),
-          ),
-          Switch(
-            value: true,
-            onChanged: (v) {},
-            activeColor: Colors.white,
-            activeTrackColor: const Color(0xFFBC6C33),
+            child: Row(
+              children: [
+                const Icon(Icons.gps_fixed_rounded, color: ErisColors.primary),
+                const SizedBox(width: 16),
+                const Expanded(
+                  child: Text('Allow Location Access', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+                Switch(value: true, onChanged: (v) {}, activeColor: ErisColors.primary),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildPageIndicator() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(3, (index) {
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          width: _currentPage == index ? 40 : 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: _currentPage == index ? const Color(0xFFBC6C33) : const Color(0xFF333333),
-            borderRadius: BorderRadius.circular(6),
+class _OnboardingContent extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String description;
+  final IconData icon;
+  final Color iconColor;
+  final Widget? extra;
+
+  const _OnboardingContent({
+    required this.title,
+    required this.subtitle,
+    required this.description,
+    required this.icon,
+    required this.iconColor,
+    this.extra,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 80, color: iconColor),
           ),
-        );
-      }),
+          const SizedBox(height: 48),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 1),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: iconColor, fontWeight: FontWeight.bold, letterSpacing: 2),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            description,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16, color: Colors.white54, height: 1.5),
+          ),
+          if (extra != null) extra!,
+        ],
+      ),
     );
   }
+}
 
-  Widget _buildNextButton() {
-    String text = 'GET STARTED →';
-    if (_currentPage == 1) text = 'NEXT →';
-    if (_currentPage == 2) text = 'ALLOW & CONTINUE';
+class _AlertPreviewCard extends StatelessWidget {
+  final String title;
+  final String location;
+  final String severity;
+  final Color color;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: InkWell(
-        onTap: () {
-          if (_currentPage < 2) {
-            _pageController.nextPage(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          }
-        },
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          decoration: BoxDecoration(
-            color: const Color(0xFFBC6C33),
-            borderRadius: BorderRadius.circular(16),
+  const _AlertPreviewCard({
+    required this.title,
+    required this.location,
+    required this.severity,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: ErisColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(severity, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold)),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                text,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              if (_currentPage == 2) ...[
-                const SizedBox(height: 8),
-                const Text(
-                  '✓',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+                Text(location, style: const TextStyle(color: Colors.white38, fontSize: 12)),
               ],
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

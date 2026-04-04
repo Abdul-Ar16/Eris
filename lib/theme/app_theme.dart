@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 
 class ErisColors {
-  static const Color background = Color(0xFF141414);
-  static const Color card = Color(0xFF1E1E1E);
-  static const Color borderBlue = Color(0xFF2D6BFF);
-
-  static const Color floodHigh = Color(0xFF7A3B3B);
-  static const Color floodWarning = Color(0xFFB06A2E);
-
-  static const Color riskHigh = Color(0xFF7A2D2D);
-  static const Color riskMedium = Color(0xFFC0832E);
-  static const Color riskSafe = Color(0xFF2F7A3A);
-
+  static const Color background = Color(0xFF000000); // True Black
+  static const Color surface = Color(0xFF121212);    // Dark Surface
+  static const Color surfaceVariant = Color(0xFF1E1E1E);
+  
   static const Color primary = Color(0xFF2D6BFF);
-  static const Color danger = Color(0xFFC43B3B);
+  static const Color primaryLight = Color(0xFF5E8BFF);
+  
+  static const Color danger = Color(0xFFFF3B3B);
+  static const Color warning = Color(0xFFFF9500);
+  static const Color success = Color(0xFF34C759);
+
+  static const Color floodHigh = Color(0xFFB71C1C);
+  static const Color floodWarning = Color(0xFFE65100);
+
+  static const Color riskHigh = Color(0xFFB71C1C);
+  static const Color riskMedium = Color(0xFFF57C00);
+  static const Color riskSafe = Color(0xFF2E7D32);
+
+  static const Color textPrimary = Colors.white;
+  static const Color textSecondary = Colors.white70;
+  static const Color textTertiary = Colors.white38;
 }
 
 class ErisTheme {
@@ -21,40 +29,71 @@ class ErisTheme {
     const ColorScheme colorScheme = ColorScheme(
       brightness: Brightness.dark,
       primary: ErisColors.primary,
-      secondary: ErisColors.borderBlue,
-      surface: ErisColors.card,
-      error: ErisColors.danger,
       onPrimary: Colors.white,
+      secondary: ErisColors.primaryLight,
       onSecondary: Colors.white,
-      onSurface: Colors.white,
+      surface: ErisColors.surface,
+      onSurface: ErisColors.textPrimary,
+      error: ErisColors.danger,
       onError: Colors.white,
       outline: Colors.white24,
+      surfaceVariant: ErisColors.surfaceVariant,
     );
 
     return ThemeData(
       useMaterial3: true,
+      brightness: Brightness.dark,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: ErisColors.background,
       appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.transparent,
+        backgroundColor: ErisColors.background,
         elevation: 0,
         foregroundColor: Colors.white,
-        centerTitle: false,
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
+        ),
       ),
       cardTheme: CardThemeData(
-        color: ErisColors.card,
+        color: ErisColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Colors.white10),
         ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: ErisColors.surfaceVariant,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white10),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: ErisColors.primary, width: 1.5),
+        ),
+        labelStyle: const TextStyle(color: ErisColors.textSecondary),
+        hintStyle: const TextStyle(color: ErisColors.textTertiary),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: ErisColors.primary,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+          minimumSize: const Size(double.infinity, 54),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
           ),
         ),
       ),
@@ -62,13 +101,23 @@ class ErisTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: Colors.white,
           side: const BorderSide(color: Colors.white24),
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+          minimumSize: const Size(double.infinity, 54),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
+      ),
+      textTheme: const TextTheme(
+        headlineLarge: TextStyle(color: ErisColors.textPrimary, fontWeight: FontWeight.bold),
+        headlineMedium: TextStyle(color: ErisColors.textPrimary, fontWeight: FontWeight.bold),
+        titleLarge: TextStyle(color: ErisColors.textPrimary, fontWeight: FontWeight.w600),
+        bodyLarge: TextStyle(color: ErisColors.textPrimary),
+        bodyMedium: TextStyle(color: ErisColors.textSecondary),
       ),
     );
   }
 }
-

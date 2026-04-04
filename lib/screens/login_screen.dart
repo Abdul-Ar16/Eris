@@ -31,18 +31,26 @@ class _LoginScreenState extends State<LoginScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          // Gradient Overlay for readability
+          // Gradient Overlay for a sleek look
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.4),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.3),
+                    Colors.black.withOpacity(0.8),
+                    Colors.black,
+                  ],
+                ),
               ),
             ),
           ),
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
+                padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -51,134 +59,105 @@ class _LoginScreenState extends State<LoginScreen> {
                       'ERIS',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 48,
+                        fontSize: 64,
                         color: Colors.white,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: -1,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
                       ),
                     ),
-                    const SizedBox(height: 40),
                     const Text(
-                      'Login to your account',
+                      'Early Response & Information System',
                       style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                        color: Colors.white70,
+                        letterSpacing: 1.2,
                       ),
                     ),
-                    const SizedBox(height: 40),
-                    // Email Field
-                    Align(
+                    const SizedBox(height: 60),
+                    const Align(
                       alignment: Alignment.centerLeft,
-                      child: const Text(
-                        'EMAIL',
+                      child: Text(
+                        'Login to your account',
                         style: TextStyle(
+                          fontSize: 20,
                           color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 32),
+                    // Email Field
                     TextField(
                       controller: _emailController,
-                      style: const TextStyle(color: Colors.black),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: const Color(0xFFD9D9D9),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        labelText: 'EMAIL',
+                        prefixIcon: Icon(Icons.email_outlined, color: Colors.white54),
                       ),
                     ),
                     const SizedBox(height: 20),
                     // Password Field
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: const Text(
-                        'PASSWORD',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
                     TextField(
                       controller: _passwordController,
                       obscureText: true,
-                      style: const TextStyle(color: Colors.black),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: const Color(0xFFD9D9D9),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        labelText: 'PASSWORD',
+                        prefixIcon: Icon(Icons.lock_outline, color: Colors.white54),
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 40),
                     // Login Button
-                    SizedBox(
-                      width: 200,
-                      height: 45,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pushReplacementNamed('/main');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFD9D9D9),
-                          foregroundColor: Colors.black,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacementNamed('/main');
+                      },
+                      child: const Text('LOGIN'),
+                    ),
+                    const SizedBox(height: 24),
+                    // Links
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Don\'t have an account? ',
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                        GestureDetector(
+                          onTap: () {},
+                          child: const Text(
+                            'Register here',
+                            style: TextStyle(
+                              color: ErisColors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        child: const Text(
-                          'LOGIN',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
+                      ],
                     ),
-                    const SizedBox(height: 20),
-                    // Links
-                    GestureDetector(
-                      onTap: () {},
-                      child: const Text(
-                        'Dont have account? Register here',
-                        style: TextStyle(color: Colors.white, fontSize: 14),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
                     GestureDetector(
                       onTap: () {},
                       child: const Text(
                         'Forgot Password?',
-                        style: TextStyle(color: Colors.white, fontSize: 14),
+                        style: TextStyle(color: Colors.white54, fontSize: 13),
                       ),
                     ),
-                    const SizedBox(height: 60),
+                    const SizedBox(height: 40),
                     // SOS Button
                     SizedBox(
-                      width: 200,
-                      height: 45,
+                      width: double.infinity,
+                      height: 54,
                       child: ElevatedButton(
                         onPressed: () => Navigator.of(context).pushNamed('/sos'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: ErisColors.danger.withOpacity(0.9),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                          backgroundColor: ErisColors.danger,
+                          elevation: 8,
+                          shadowColor: ErisColors.danger.withOpacity(0.5),
                         ),
                         child: const Text(
                           'SOS EMERGENCY',
-                          style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.2),
+                          style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.0),
                         ),
                       ),
                     ),
