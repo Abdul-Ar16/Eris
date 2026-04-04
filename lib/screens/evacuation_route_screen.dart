@@ -182,7 +182,6 @@ class _ShelterCard extends StatelessWidget {
           Text(distanceText, style: const TextStyle(color: Colors.white70, fontSize: 12)),
           const SizedBox(height: 12),
           SizedBox(
-            height: 38,
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {},

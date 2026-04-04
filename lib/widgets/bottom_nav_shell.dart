@@ -51,6 +51,10 @@ class _MainShellState extends State<MainShell> {
             label: 'History',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.add_alert_outlined),
+            label: 'Alerts',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.monitor_outlined),
             label: 'Monitor',
           ),
