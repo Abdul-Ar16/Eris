@@ -40,17 +40,17 @@ class _AlertsFlowScreenState extends State<AlertsFlowScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             _buildPageIndicator(),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
             _buildNextButton(),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             if (_currentPage == 0)
               const Text(
                 'Already have an account? Log in',
                 style: TextStyle(color: Colors.white, fontSize: 12),
               ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -58,106 +58,114 @@ class _AlertsFlowScreenState extends State<AlertsFlowScreen> {
   }
 
   Widget _buildFirstPage() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(25),
-            decoration: BoxDecoration(
-              color: const Color(0xFF3E190B),
-              shape: BoxShape.circle,
-            ),
-            child: const Text('🚨', style: TextStyle(fontSize: 60)),
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(25),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF3E190B),
+                  shape: BoxShape.circle,
+                ),
+                child: const Text('🚨', style: TextStyle(fontSize: 60)),
+              ),
+              const SizedBox(height: 60),
+              const Text(
+                'DISASTER ALERT',
+                style: TextStyle(
+                  color: Color(0xFFD9B067),
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'EARLY WARNING SYSTEM',
+                style: TextStyle(
+                  color: Color(0xFFBC6C33),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 40),
+              const Text(
+                'Stay ahead of floods and landslides. Get real-time alerts, evacuation routes, and safety guidance — right on your phone.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  height: 1.4,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 60),
-          const Text(
-            'DISASTER ALERT',
-            style: TextStyle(
-              color: Color(0xFFD9B067),
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'EARLY WARNING SYSTEM',
-            style: TextStyle(
-              color: Color(0xFFBC6C33),
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 40),
-          const Text(
-            'Stay ahead of floods and landslides. Get real-time alerts, evacuation routes, and safety guidance — right on your phone.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              height: 1.4,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildSecondPage() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(25),
-            decoration: BoxDecoration(
-              color: const Color(0xFF232D3F),
-              shape: BoxShape.circle,
-            ),
-            child: const Text('🔔', style: TextStyle(fontSize: 60)),
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(25),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF232D3F),
+                  shape: BoxShape.circle,
+                ),
+                child: const Text('🔔', style: TextStyle(fontSize: 60)),
+              ),
+              const SizedBox(height: 60),
+              const Text(
+                'REAL-TIME ALERTS',
+                style: TextStyle(
+                  color: Color(0xFFD9B067),
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Colors.blue,
+                  decorationThickness: 2,
+                ),
+              ),
+              const SizedBox(height: 40),
+              const Text(
+                'The moment our sensors detect rising water levels or unstable soil conditions, you’ll be the first to know - even before it happens',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 40),
+              _buildAlertCard(
+                '🌊',
+                'Flood risk detected - Colombo 05',
+                'HIGH',
+                const Color(0xFF3E190B),
+                const Color(0xFFB13131),
+              ),
+              const SizedBox(height: 15),
+              _buildAlertCard(
+                '⛰️',
+                'Landslide warning - Kandy Hills',
+                'MED',
+                const Color(0xFF342A1E),
+                const Color(0xFFBC6C33),
+              ),
+            ],
           ),
-          const SizedBox(height: 60),
-          const Text(
-            'REAL-TIME ALERTS',
-            style: TextStyle(
-              color: Color(0xFFD9B067),
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              decoration: TextDecoration.underline,
-              decorationColor: Colors.blue,
-              decorationThickness: 2,
-            ),
-          ),
-          const SizedBox(height: 40),
-          const Text(
-            'The moment our sensors detect rising water levels or unstable soil conditions, you’ll be the first to know - even before it happens',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 40),
-          _buildAlertCard(
-            '🌊',
-            'Flood risk detected - Colombo 05',
-            'HIGH',
-            const Color(0xFF3E190B),
-            const Color(0xFFB13131),
-          ),
-          const SizedBox(height: 15),
-          _buildAlertCard(
-            '⛰️',
-            'Landslide warning - Kandy Hills',
-            'MED',
-            const Color(0xFF342A1E),
-            const Color(0xFFBC6C33),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -200,53 +208,57 @@ class _AlertsFlowScreenState extends State<AlertsFlowScreen> {
   }
 
   Widget _buildThirdPage() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(25),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1E2E20),
-              shape: BoxShape.circle,
-            ),
-            child: const Text('📍', style: TextStyle(fontSize: 60)),
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(25),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1E2E20),
+                  shape: BoxShape.circle,
+                ),
+                child: const Text('📍', style: TextStyle(fontSize: 60)),
+              ),
+              const SizedBox(height: 60),
+              const Text(
+                'ENABLE LOCATION',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'We need your location to send you alerts that are specific to your area and show you the nearest evacuation shelters.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 40),
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF262626),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    _buildSwitchRow('📍', 'Allow Location Access'),
+                    const Divider(color: Colors.white24, height: 1),
+                    _buildSwitchRow('🔔', 'Allow Location Access'),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 60),
-          const Text(
-            'ENABLE LOCATION',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'We need your location to send you alerts that are specific to your area and show you the nearest evacuation shelters.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 40),
-          Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF262626),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              children: [
-                _buildSwitchRow('📍', 'Allow Location Access'),
-                const Divider(color: Colors.white24, height: 1),
-                _buildSwitchRow('🔔', 'Allow Location Access'),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
