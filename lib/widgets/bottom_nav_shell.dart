@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../screens/alerts_flow_screen.dart';
 import '../screens/history_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/learn_screen.dart';
@@ -21,6 +22,7 @@ class _MainShellState extends State<MainShell> {
   final List<Widget> _tabs = const <Widget>[
     HomeScreen(),
     HistoryScreen(),
+    AlertsFlowScreen(),
     MonitorScreen(),
     LearnScreen(),
     ProfileScreen(),
@@ -71,4 +73,3 @@ class _MainShellState extends State<MainShell> {
     );
   }
 }
-
