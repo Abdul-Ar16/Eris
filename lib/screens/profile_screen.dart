@@ -10,7 +10,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String _language = 'English (US)';
+  String _language = 'English';
   /// Display preference only; app shell stays on [ErisTheme] (dark).
   bool _preferDarkUiAccent = true;
 
@@ -324,8 +324,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                     items: const [
-                      DropdownMenuItem(value: 'English (US)', child: Text('English (US)')),
-                      DropdownMenuItem(value: 'English (UK)', child: Text('English (UK)')),
+                      DropdownMenuItem(value: 'English', child: Text('English')),
+                      DropdownMenuItem(value: 'Tamil', child: Text('Tamil')),
                       DropdownMenuItem(value: 'Sinhala', child: Text('Sinhala')),
                     ],
                     onChanged: (v) {
