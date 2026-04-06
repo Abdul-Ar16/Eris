@@ -19,7 +19,7 @@ class _MainShellState extends State<MainShell> {
 
   final List<Widget> _tabs = const <Widget>[
     HomeScreen(),
-    HistoryScreen(),
+    // HistoryScreen(),
     AlertsFlowScreen(),
     MonitorScreen(),
     LearnScreen(),
@@ -56,11 +56,11 @@ class _MainShellState extends State<MainShell> {
               activeIcon: Icon(Icons.dashboard_rounded),
               label: 'Home',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history_rounded),
-              activeIcon: Icon(Icons.history_rounded),
-              label: 'History',
-            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.history_rounded),
+            //   activeIcon: Icon(Icons.history_rounded),
+            //   label: 'History',
+            // ),
             BottomNavigationBarItem(
               icon: Icon(Icons.notifications_active_outlined),
               activeIcon: Icon(Icons.notifications_active_rounded),
@@ -77,9 +77,9 @@ class _MainShellState extends State<MainShell> {
               label: 'Learn',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline_rounded),
-              activeIcon: Icon(Icons.person_rounded),
-              label: 'Profile',
+              icon: Icon(Icons.settings_outlined),
+              activeIcon: Icon(Icons.settings),
+              label: 'Settings',
             ),
           ],
         ),

@@ -70,7 +70,7 @@ class _AlertsFlowScreenState extends State<AlertsFlowScreen> {
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        // Finish
+                        Navigator.of(context).pushNamed('/history');
                       }
                     },
                     child: Text(_currentPage == 2 ? 'GET STARTED' : 'CONTINUE'),
