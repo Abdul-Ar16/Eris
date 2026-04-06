@@ -326,7 +326,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
           const Icon(Icons.verified_rounded, color: ErisColors.success, size: 26),
           const SizedBox(height: 8),
           const Text(
-            'Effective Date: 1 January 2025',
+            'Effective Date: 1 May 2026',
             style: TextStyle(
               color: ErisColors.textSecondary,
               fontSize: 13,
