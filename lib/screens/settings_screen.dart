@@ -518,11 +518,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: 'Privacy Policy',
           trailing: const Icon(Icons.open_in_new_rounded, color: ErisColors.textTertiary, size: 20),
           showDivider: true,
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Privacy policy')),
-            );
-          },
+          onTap: () => Navigator.of(context).pushNamed('/privacy-policy'),
         ),
         InkWell(
           onTap: () => Navigator.of(context).pushReplacementNamed('/login'),
