@@ -23,7 +23,7 @@ class _MainShellState extends State<MainShell> {
     MonitorScreen(),
     LearnScreen(),
     SettingsScreen(),
-    ProfileScreen(),
+    // ProfileScreen(),
   ];
 
   @override
@@ -81,11 +81,11 @@ class _MainShellState extends State<MainShell> {
               activeIcon: Icon(Icons.settings_rounded),
               label: 'Settings',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline_rounded),
-              activeIcon: Icon(Icons.person_rounded),
-              label: 'Profile',
-            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.person_outline_rounded),
+            //   activeIcon: Icon(Icons.person_rounded),
+            //   label: 'Profile',
+            // ),
           ],
         ),
       ),
