@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _emailController,
                       style: const TextStyle(color: Colors.white),
                       decoration: const InputDecoration(
-                        labelText: 'EMAIL',
+                        labelText: 'EMAIL / PHONE NUMBER',
                         prefixIcon: Icon(Icons.email_outlined, color: Colors.white54),
                       ),
                     ),
