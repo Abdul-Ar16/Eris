@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../services/avatar_notifier.dart';
 import '../theme/app_theme.dart';
 import 'profile_screen.dart';
 
@@ -17,32 +17,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _pushNotifications = true;
   bool _criticalSound = true;
   bool _smsAlerts = false;
-  String? _avatarPath;
-
-  static const _kAvatarKey = 'profile_avatar_path';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadAvatar();
-  }
-
-  // Refresh avatar whenever the user pops back from the Profile screen.
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _loadAvatar();
-  }
-
-  Future<void> _loadAvatar() async {
-    final prefs = await SharedPreferences.getInstance();
-    final path = prefs.getString(_kAvatarKey);
-    if (mounted) {
-      setState(() {
-        _avatarPath = (path != null && File(path).existsSync()) ? path : null;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,23 +116,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                  radius: 28,
-                  backgroundColor: ErisColors.surfaceVariant,
-                  backgroundImage: _avatarPath != null
-                      ? FileImage(File(_avatarPath!))
-                      : null,
-                  child: _avatarPath == null
-                      ? const Text(
-                          'VR',
-                          style: TextStyle(
-                            color: ErisColors.primaryLight,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : null,
-                ),
+              ValueListenableBuilder<String?>(
+                valueListenable: avatarNotifier,
+                builder: (context, path, _) {
+                  return CircleAvatar(
+                    radius: 28,
+                    backgroundColor: ErisColors.surfaceVariant,
+                    backgroundImage:
+                        path != null ? FileImage(File(path)) : null,
+                    child: path == null
+                        ? const Text(
+                            'VR',
+                            style: TextStyle(
+                              color: ErisColors.primaryLight,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : null,
+                  );
+                },
+              ),
               const SizedBox(width: 14),
               const Expanded(
                 child: Column(

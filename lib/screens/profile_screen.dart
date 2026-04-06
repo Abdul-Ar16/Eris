@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/avatar_notifier.dart';
 import '../theme/app_theme.dart';
 
 /// Profile: personal info, activity, preferences — styled for [ErisTheme] (dark).
@@ -29,9 +30,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadAvatar() async {
     final prefs = await SharedPreferences.getInstance();
     final path = prefs.getString(_kAvatarKey);
-    if (path != null && File(path).existsSync()) {
-      setState(() => _avatarPath = path);
-    }
+    final resolved = (path != null && File(path).existsSync()) ? path : null;
+    avatarNotifier.value = resolved; // seed the global notifier
+    if (mounted) setState(() => _avatarPath = resolved);
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -45,6 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (file == null) return;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_kAvatarKey, file.path);
+    avatarNotifier.value = file.path; // notify all listeners immediately
     setState(() => _avatarPath = file.path);
   }
 
@@ -123,6 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.of(context).pop();
                     final prefs = await SharedPreferences.getInstance();
                     await prefs.remove(_kAvatarKey);
+                    avatarNotifier.value = null; // notify all listeners immediately
                     setState(() => _avatarPath = null);
                   },
                 ),
