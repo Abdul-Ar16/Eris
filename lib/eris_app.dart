@@ -8,6 +8,7 @@ import 'screens/login_screen.dart';
 import 'screens/registration_screen.dart';
 import 'screens/monitor_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/settings_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/emergency_sos_screen.dart';
 import 'screens/map_view_screen.dart';
@@ -32,6 +33,7 @@ class ErisApp extends StatelessWidget {
         '/monitor': (_) => const MonitorScreen(),
         '/learn': (_) => const LearnScreen(),
         '/profile': (_) => const ProfileScreen(),
+        '/settings': (_) => const SettingsScreen(),
         '/evacuation': (_) => const EvacuationRouteScreen(),
         '/sos': (_) => const EmergencySosScreen(),
         '/map': (_) => const MapViewScreen(),

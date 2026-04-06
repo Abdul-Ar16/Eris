@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../screens/alerts_flow_screen.dart';
-import '../screens/history_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/learn_screen.dart';
 import '../screens/monitor_screen.dart';
 import '../screens/profile_screen.dart';
+import '../screens/settings_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -19,10 +19,10 @@ class _MainShellState extends State<MainShell> {
 
   final List<Widget> _tabs = const <Widget>[
     HomeScreen(),
-    // HistoryScreen(),
     AlertsFlowScreen(),
     MonitorScreen(),
     LearnScreen(),
+    SettingsScreen(),
     ProfileScreen(),
   ];
 
@@ -37,7 +37,7 @@ class _MainShellState extends State<MainShell> {
         decoration: BoxDecoration(
           color: ErisColors.background,
           border: Border(
-            top: BorderSide(color: Colors.white.withOpacity(0.05), width: 0.5),
+            top: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
           ),
         ),
         child: BottomNavigationBar(
@@ -78,8 +78,13 @@ class _MainShellState extends State<MainShell> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings_outlined),
-              activeIcon: Icon(Icons.settings),
+              activeIcon: Icon(Icons.settings_rounded),
               label: 'Settings',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline_rounded),
+              activeIcon: Icon(Icons.person_rounded),
+              label: 'Profile',
             ),
           ],
         ),
