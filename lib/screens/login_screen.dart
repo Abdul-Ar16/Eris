@@ -121,7 +121,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(color: Colors.white70),
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.of(context).pushNamed('/register');
+                          },
                           child: const Text(
                             'Register here',
                             style: TextStyle(

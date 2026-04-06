@@ -5,6 +5,7 @@ import 'screens/evacuation_route_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/learn_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/registration_screen.dart';
 import 'screens/monitor_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/splash_screen.dart';
@@ -24,6 +25,7 @@ class ErisApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/': (_) => const SplashScreen(),
         '/login': (_) => const LoginScreen(),
+        '/register': (_) => const RegistrationScreen(),
         '/main': (_) => const MainShell(),
         '/home': (_) => const HomeScreen(),
         '/history': (_) => const HistoryScreen(),
