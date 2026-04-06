@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_theme.dart';
 
 /// Profile: personal info, activity, preferences — styled for [ErisTheme] (dark).
@@ -13,6 +16,180 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _language = 'English';
   /// Display preference only; app shell stays on [ErisTheme] (dark).
   bool _preferDarkUiAccent = true;
+  String? _avatarPath;
+
+  static const _kAvatarKey = 'profile_avatar_path';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAvatar();
+  }
+
+  Future<void> _loadAvatar() async {
+    final prefs = await SharedPreferences.getInstance();
+    final path = prefs.getString(_kAvatarKey);
+    if (path != null && File(path).existsSync()) {
+      setState(() => _avatarPath = path);
+    }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    Navigator.of(context).pop(); // close bottom sheet
+    final picker = ImagePicker();
+    final XFile? file = await picker.pickImage(
+      source: source,
+      imageQuality: 85,
+      maxWidth: 600,
+    );
+    if (file == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kAvatarKey, file.path);
+    setState(() => _avatarPath = file.path);
+  }
+
+  void _showPickerSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: ErisColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (_) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+              const Text(
+                'Profile Photo',
+                style: TextStyle(
+                  color: ErisColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Choose how to update your profile picture.',
+                style: TextStyle(
+                  color: ErisColors.textSecondary,
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Camera option
+              _pickerOption(
+                icon: Icons.camera_alt_rounded,
+                iconBg: ErisColors.primary.withValues(alpha: 0.18),
+                iconColor: ErisColors.primary,
+                title: 'Take a Photo',
+                subtitle: 'Use your camera to snap a new photo',
+                onTap: () => _pickImage(ImageSource.camera),
+              ),
+              const SizedBox(height: 10),
+              // Gallery option
+              _pickerOption(
+                icon: Icons.photo_library_rounded,
+                iconBg: ErisColors.primaryLight.withValues(alpha: 0.14),
+                iconColor: ErisColors.primaryLight,
+                title: 'Choose from Gallery',
+                subtitle: 'Pick an existing photo from your device',
+                onTap: () => _pickImage(ImageSource.gallery),
+              ),
+              if (_avatarPath != null) ...
+              [
+                const SizedBox(height: 10),
+                _pickerOption(
+                  icon: Icons.delete_outline_rounded,
+                  iconBg: ErisColors.danger.withValues(alpha: 0.14),
+                  iconColor: ErisColors.danger,
+                  title: 'Remove Photo',
+                  subtitle: 'Revert to your default initials avatar',
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.remove(_kAvatarKey);
+                    setState(() => _avatarPath = null);
+                  },
+                ),
+              ],
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _pickerOption({
+    required IconData icon,
+    required Color iconBg,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          color: ErisColors.surfaceVariant,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.white10),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
+              child: Icon(icon, color: iconColor, size: 22),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: ErisColors.textPrimary,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: ErisColors.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: Colors.white24, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,22 +246,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: ErisColors.primary.withValues(alpha: 0.5), width: 2),
-              ),
-              child: CircleAvatar(
-                radius: 56,
-                backgroundColor: ErisColors.surfaceVariant,
-                child: Text(
-                  'VR',
-                  style: TextStyle(
-                    color: ErisColors.primaryLight,
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
+            GestureDetector(
+              onTap: _showPickerSheet,
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: ErisColors.primary.withValues(alpha: 0.5),
+                    width: 2,
                   ),
+                ),
+                child: CircleAvatar(
+                  radius: 56,
+                  backgroundColor: ErisColors.surfaceVariant,
+                  backgroundImage: _avatarPath != null
+                      ? FileImage(File(_avatarPath!))
+                      : null,
+                  child: _avatarPath == null
+                      ? Text(
+                          'VR',
+                          style: TextStyle(
+                            color: ErisColors.primaryLight,
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : null,
                 ),
               ),
             ),
@@ -92,11 +280,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               right: 4,
               bottom: 4,
               child: GestureDetector(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Edit photo')),
-                  );
-                },
+                onTap: _showPickerSheet,
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: const BoxDecoration(
