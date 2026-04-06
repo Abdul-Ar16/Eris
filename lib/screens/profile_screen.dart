@@ -417,9 +417,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       width: double.infinity,
       child: OutlinedButton.icon(
         onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Change password')),
-          );
+          Navigator.of(context).pushNamed('/change-password');
         },
         icon: const Icon(Icons.lock_reset_rounded, color: ErisColors.primary, size: 22),
         label: const Text(
