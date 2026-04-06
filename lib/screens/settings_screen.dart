@@ -387,21 +387,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          TextButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Add contact coming soon')),
-              );
-            },
-            child: const Text(
-              '+ Add New',
-              style: TextStyle(
-                color: ErisColors.primary,
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
-              ),
-            ),
-          ),
+          // TextButton(
+          //   onPressed: () {
+          //     ScaffoldMessenger.of(context).showSnackBar(
+          //       const SnackBar(content: Text('Add contact coming soon')),
+          //     );
+          //   },
+          //   child: const Text(
+          //     '+ Add New',
+          //     style: TextStyle(
+          //       color: ErisColors.primary,
+          //       fontWeight: FontWeight.w700,
+          //       fontSize: 13,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
