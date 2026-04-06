@@ -145,27 +145,27 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   if (v == null || v.isEmpty) return 'Enter your current password';
                   return null;
                 },
-                trailing: GestureDetector(
-                  onTap: () {
-                    // TODO: navigate to forgot password flow
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Forgot password flow')),
-                    );
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.only(right: 14, bottom: 2),
-                    child: Text(
-                      'Forgot\nPassword?',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: ErisColors.primary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        height: 1.3,
-                      ),
-                    ),
-                  ),
-                ),
+                // trailing: GestureDetector(
+                //   onTap: () {
+                //     // TODO: navigate to forgot password flow
+                //     ScaffoldMessenger.of(context).showSnackBar(
+                //       const SnackBar(content: Text('Forgot password flow')),
+                //     );
+                //   },
+                //   child: const Padding(
+                //     padding: EdgeInsets.only(right: 14, bottom: 2),
+                //     child: Text(
+                //       'Forgot\nPassword?',
+                //       textAlign: TextAlign.right,
+                //       style: TextStyle(
+                //         color: ErisColors.primary,
+                //         fontSize: 12,
+                //         fontWeight: FontWeight.w600,
+                //         height: 1.3,
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ),
               const SizedBox(height: 22),
 
