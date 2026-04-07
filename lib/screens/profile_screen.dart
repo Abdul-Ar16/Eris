@@ -211,16 +211,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               )
             : null,
         title: const SizedBox.shrink(),
-        actions: [
-          IconButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Location & signal')),
-              );
-            },
-            icon: const Icon(Icons.gps_fixed_rounded, color: ErisColors.primary, size: 24),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       ScaffoldMessenger.of(context).showSnackBar(
+        //         const SnackBar(content: Text('Location & signal')),
+        //       );
+        //     },
+        //     icon: const Icon(Icons.gps_fixed_rounded, color: ErisColors.primary, size: 24),
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
