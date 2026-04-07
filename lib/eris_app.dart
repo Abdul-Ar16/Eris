@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/change_password_screen.dart';
+import 'screens/forgot_password_screen.dart';
 import 'screens/privacy_policy_screen.dart';
 import 'screens/history_screen.dart';
 import 'screens/evacuation_route_screen.dart';
@@ -41,6 +42,7 @@ class ErisApp extends StatelessWidget {
         '/map': (_) => const MapViewScreen(),
         '/change-password': (_) => const ChangePasswordScreen(),
         '/privacy-policy': (_) => const PrivacyPolicyScreen(),
+        '/forgot-password': (_) => const ForgotPasswordScreen(),
       },
       initialRoute: '/',
     );

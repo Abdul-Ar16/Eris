@@ -39,8 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.3),
-                    Colors.black.withOpacity(0.8),
+                    Colors.black.withValues(alpha: 0.3),
+                    Colors.black.withValues(alpha: 0.8),
                     Colors.black,
                   ],
                 ),
@@ -136,10 +136,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 12),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () =>
+                          Navigator.of(context).pushNamed('/forgot-password'),
                       child: const Text(
                         'Forgot Password?',
-                        style: TextStyle(color: Colors.white54, fontSize: 13),
+                        style: TextStyle(
+                          color: ErisColors.primary,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 40),
@@ -152,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ErisColors.danger,
                           elevation: 8,
-                          shadowColor: ErisColors.danger.withOpacity(0.5),
+                          shadowColor: ErisColors.danger.withValues(alpha: 0.5),
                         ),
                         child: const Text(
                           'SOS EMERGENCY',
