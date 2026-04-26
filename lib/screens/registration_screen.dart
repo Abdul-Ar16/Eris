@@ -134,7 +134,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Registration successful!'), backgroundColor: Colors.green),
           );
-          // Navigator.of(context).pushReplacementNamed('/login');
+           Navigator.of(context).pushReplacementNamed('/login');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(result['message'] ?? 'Registration failed'), backgroundColor: Colors.red),
