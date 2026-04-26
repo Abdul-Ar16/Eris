@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../services/auth_service.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -10,7 +11,9 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final PageController _pageController = PageController();
+  final AuthService _authService = AuthService();
   int _currentPhase = 0;
+  bool _isLoading = false;
 
   // Phase 3 — Alert preferences
   bool _prefFlood = true;
@@ -37,6 +40,32 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  // Dropdown Values
+  String _countryCode = '+94';
+  String? _selectedProvince;
+  String? _selectedDistrict;
+  String? _selectedZone;
+
+  // Form Validation Keys
+  final _phase1Key = GlobalKey<FormState>();
+  final _phase2Key = GlobalKey<FormState>();
+  final _phase4Key = GlobalKey<FormState>();
+
+  // Data lists
+  final List<String> _provinces = ['Western', 'Central', 'Southern', 'Northern', 'Eastern', 'North Western', 'North Central', 'Uva', 'Sabaragamuwa'];
+  final Map<String, List<String>> _districtsMap = {
+    'Western': ['Colombo', 'Gampaha', 'Kalutara'],
+    'Central': ['Kandy', 'Matale', 'Nuwara Eliya'],
+    'Southern': ['Galle', 'Matara', 'Hambantota'],
+    'Northern': ['Jaffna', 'Kilinochchi', 'Mannar', 'Vavuniya', 'Mullaitivu'],
+    'Eastern': ['Trincomalee', 'Batticaloa', 'Ampara'],
+  };
+  final Map<String, List<String>> _zonesMap = {
+    'Colombo': ['Colombo 01', 'Colombo 03', 'Battaramullah', 'Dehiwala', 'Mount Lavinia'],
+    'Gampaha': ['Gampaha Town', 'Negombo', 'Kelaniya', 'Wattala'],
+    'Kandy': ['Kandy City', 'Peradeniya', 'Katugastota'],
+  };
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -53,15 +82,72 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     super.dispose();
   }
 
-  void _nextPhase() {
+  void _nextPhase() async {
+    // Phase 1 Validation
+    if (_currentPhase == 0) {
+      if (_nameController.text.isEmpty || _emailController.text.isEmpty || _phoneController.text.isEmpty || _passwordController.text.isEmpty) {
+        _showError('Please fill in all basic details.');
+        return;
+      }
+      if (_passwordController.text != _confirmPasswordController.text) {
+        _showError('Passwords do not match.');
+        return;
+      }
+    }
+
+    // Phase 2 Validation
+    if (_currentPhase == 1) {
+      if (_selectedProvince == null || _selectedDistrict == null || _selectedZone == null) {
+        _showError('Please select your complete location.');
+        return;
+      }
+    }
+
+    // Phase 4 Validation
+    if (_currentPhase == 3) {
+      if (_emergencyNameController.text.isEmpty || _emergencyPhoneController.text.isEmpty) {
+        _showError('Please provide an emergency contact.');
+        return;
+      }
+    }
+
     if (_currentPhase < 4) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
       );
     } else {
-      Navigator.of(context).pushReplacementNamed('/main');
+      setState(() => _isLoading = true);
+      
+      final result = await _authService.registerUser(
+        fullName: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        phoneNumber: '$_countryCode${_phoneController.text.trim()}',
+        district: _selectedDistrict ?? 'Unknown',
+      );
+
+      setState(() => _isLoading = false);
+
+      if (mounted) {
+        if (result['success']) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Registration successful!'), backgroundColor: Colors.green),
+          );
+          // Navigator.of(context).pushReplacementNamed('/login');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result['message'] ?? 'Registration failed'), backgroundColor: Colors.red),
+          );
+        }
+      }
     }
+  }
+
+  void _showError(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.orange),
+    );
   }
 
   void _previousPhase() {
@@ -105,7 +191,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void _goToHome() {
-    Navigator.of(context).pushReplacementNamed('/login');
+     Navigator.of(context).pushReplacementNamed('/login');
   }
 
   String get _summaryDisplayName {
@@ -201,18 +287,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           Row(
             children: [
               Container(
-                width: 70,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                width: 85,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
                   color: ErisColors.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.white10),
                 ),
-                child: const Row(
-                  children: [
-                    Text('+1', style: TextStyle(color: Colors.white)),
-                    Icon(Icons.keyboard_arrow_down, color: Colors.white38, size: 16),
-                  ],
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _countryCode,
+                    dropdownColor: ErisColors.surface,
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white38, size: 16),
+                    items: ['+94', '+1', '+44', '+91'].map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                    onChanged: (v) => setState(() => _countryCode = v!),
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -350,13 +440,35 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
           const SizedBox(height: 24),
           _buildLabel('Province'),
-          _buildDropdownField('Select Province'),
+          _buildDropdownField(
+            hint: 'Select Province',
+            value: _selectedProvince,
+            items: _provinces,
+            onChanged: (v) => setState(() {
+              _selectedProvince = v;
+              _selectedDistrict = null;
+              _selectedZone = null;
+            }),
+          ),
           const SizedBox(height: 20),
           _buildLabel('District'),
-          _buildDropdownField('Select District'),
+          _buildDropdownField(
+            hint: 'Select District',
+            value: _selectedDistrict,
+            items: _selectedProvince != null ? (_districtsMap[_selectedProvince!] ?? []) : [],
+            onChanged: (v) => setState(() {
+              _selectedDistrict = v;
+              _selectedZone = null;
+            }),
+          ),
           const SizedBox(height: 20),
           _buildLabel('Zone / Area'),
-          _buildDropdownField('Select Zone'),
+          _buildDropdownField(
+            hint: 'Select Zone',
+            value: _selectedZone,
+            items: _selectedDistrict != null ? (_zonesMap[_selectedDistrict!] ?? ['Other']) : [],
+            onChanged: (v) => setState(() => _selectedZone = v),
+          ),
           const SizedBox(height: 32),
           Container(
             height: 120,
@@ -406,20 +518,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  Widget _buildDropdownField(String hint) {
+  Widget _buildDropdownField({
+    required String hint,
+    required String? value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: ErisColors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white10),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(hint, style: const TextStyle(color: Colors.white38, fontSize: 14)),
-          const Icon(Icons.keyboard_arrow_down, color: Colors.white38),
-        ],
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: value,
+          hint: Text(hint, style: const TextStyle(color: Colors.white38, fontSize: 14)),
+          isExpanded: true,
+          dropdownColor: ErisColors.surface,
+          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white38),
+          style: const TextStyle(color: Colors.white, fontSize: 14),
+          items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+          onChanged: onChanged,
+        ),
       ),
     );
   }
@@ -1491,7 +1613,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _goToHome,
+              onPressed: _nextPhase,
               style: ElevatedButton.styleFrom(
                 backgroundColor: ErisColors.primary,
                 foregroundColor: Colors.white,
@@ -1538,7 +1660,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
               ElevatedButton(
-                onPressed: _goToHome,
+                onPressed: _nextPhase,
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(148, 54),
                   backgroundColor: ErisColors.primary,
