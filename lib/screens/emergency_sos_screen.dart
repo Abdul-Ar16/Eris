@@ -1,8 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import '../theme/app_theme.dart';
+import '../services/auth_service.dart';
 
-class EmergencySosScreen extends StatelessWidget {
+class EmergencySosScreen extends StatefulWidget {
   const EmergencySosScreen({super.key});
+
+  @override
+  State<EmergencySosScreen> createState() => _EmergencySosScreenState();
+}
+
+class _EmergencySosScreenState extends State<EmergencySosScreen> {
+  final AuthService _authService = AuthService();
+  bool _isSending = false;
+
+  Future<void> _triggerSos() async {
+    setState(() => _isSending = true);
+
+    try {
+      // 1. Get Location Permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        _showSnackbar('Location permissions are permanently denied.', Colors.red);
+        setState(() => _isSending = false);
+        return;
+      }
+
+      // 2. Get Current Position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high
+      );
+
+      // 3. Send to Backend
+      final result = await _authService.sendSosReport(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        district: 'Colombo', // In production, reverse geocode this
+      );
+
+      if (mounted) {
+        if (result['success']) {
+          _showSnackbar('SOS ALERT SENT SUCCESSFULLY!', Colors.green);
+        } else {
+          _showSnackbar(result['message'] ?? 'Failed to send SOS', Colors.red);
+        }
+      }
+    } catch (e) {
+      _showSnackbar('Error triggering SOS: $e', Colors.red);
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
+  }
+
+  void _showSnackbar(String msg, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: color),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +99,9 @@ class EmergencySosScreen extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            // Animated SOS Button Container
             Stack(
               alignment: Alignment.center,
               children: [
-                // Outer Ripple Effect (Static for now, but implies animation)
                 Container(
                   width: 280,
                   height: 280,
@@ -62,11 +118,8 @@ class EmergencySosScreen extends StatelessWidget {
                     color: ErisColors.danger.withOpacity(0.1),
                   ),
                 ),
-                // Main Button
                 GestureDetector(
-                  onTap: () {
-                    // SOS Logic
-                  },
+                  onTap: _isSending ? null : _triggerSos,
                   child: Container(
                     width: 160,
                     height: 160,
@@ -81,16 +134,18 @@ class EmergencySosScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const Center(
-                      child: Text(
-                        'SOS',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 48,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
-                        ),
-                      ),
+                    child: Center(
+                      child: _isSending 
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            'SOS',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 48,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                            ),
+                          ),
                     ),
                   ),
                 ),
@@ -98,11 +153,10 @@ class EmergencySosScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             const Text(
-              'Press and hold for 3 seconds',
+              'Press the button to send immediate alert',
               style: TextStyle(color: Colors.white38, fontSize: 13),
             ),
             const Spacer(),
-            // Emergency Contacts Card
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               padding: const EdgeInsets.all(24),

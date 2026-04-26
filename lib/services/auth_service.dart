@@ -34,6 +34,39 @@ class AuthService {
     }
   }
 
+  // Send SOS Report
+  Future<Map<String, dynamic>> sendSosReport({
+    required double latitude,
+    required double longitude,
+    required String district,
+    String? description,
+  }) async {
+    try {
+      // For now, using a default userId of 1 since we are in testing. 
+      // In production, this would come from the saved JWT/User profile.
+      const int userId = 1;
+      final url = Uri.parse('${ApiConstants.baseUrl}/reports/user/$userId');
+      
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'title': 'SOS EMERGENCY ALERT',
+          'description': description ?? 'Emergency assistance requested via SOS button.',
+          'district': district,
+          'latitude': latitude,
+          'longitude': longitude,
+          'type': 'OTHER',
+          'status': 'PENDING'
+        }),
+      );
+
+      return _handleResponse(response);
+    } catch (e) {
+      return {'success': false, 'message': 'Failed to send SOS. Check connection.'};
+    }
+  }
+
   // Login User
   Future<Map<String, dynamic>> loginUser({
     required String email,
