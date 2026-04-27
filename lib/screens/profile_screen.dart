@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/avatar_notifier.dart';
+import '../services/auth_service.dart';
 import '../theme/app_theme.dart';
 
 /// Profile: personal info, activity, preferences — styled for [ErisTheme] (dark).
@@ -14,10 +15,16 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final AuthService _authService = AuthService();
   String _language = 'English';
   /// Display preference only; app shell stays on [ErisTheme] (dark).
   bool _preferDarkUiAccent = true;
   String? _avatarPath;
+  String _fullName = 'User';
+  String _email = '-';
+  String _phoneNumber = '-';
+  String _district = '-';
+  String? _preferredLanguageCode;
 
   static const _kAvatarKey = 'profile_avatar_path';
 
@@ -25,6 +32,82 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _loadAvatar();
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    final result = await _authService.getProfile();
+    if (!mounted) return;
+    if (result['success'] != true || result['data'] == null) {
+      final message = (result['message']?.toString().trim().isNotEmpty ?? false)
+          ? result['message'].toString()
+          : 'Failed to load profile.';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+      return;
+    }
+
+    final data = result['data'] as Map<String, dynamic>;
+    final langCode = (data['preferredLanguage'] ?? 'EN').toString().toUpperCase();
+
+    setState(() {
+      _fullName = (data['fullName'] ?? _fullName).toString();
+      _email = (data['email'] ?? _email).toString();
+      _phoneNumber = (data['phoneNumber'] ?? _phoneNumber).toString();
+      _district = (data['district'] ?? _district).toString();
+      _preferredLanguageCode = langCode;
+      _language = _languageFromCode(langCode);
+    });
+  }
+
+  String _languageFromCode(String code) {
+    switch (code.toUpperCase()) {
+      case 'SI':
+        return 'Sinhala';
+      case 'TA':
+        return 'Tamil';
+      case 'EN':
+      default:
+        return 'English';
+    }
+  }
+
+  String _languageToCode(String language) {
+    switch (language) {
+      case 'Sinhala':
+        return 'SI';
+      case 'Tamil':
+        return 'TA';
+      case 'English':
+      default:
+        return 'EN';
+    }
+  }
+
+  Future<void> _updatePreferredLanguage(String selectedLanguage) async {
+    final selectedCode = _languageToCode(selectedLanguage);
+    final result = await _authService.updateProfile(
+      fullName: _fullName,
+      phoneNumber: _phoneNumber,
+      district: _district,
+      preferredLanguage: selectedCode,
+    );
+    if (!mounted) return;
+    if (result['success'] == true) {
+      setState(() {
+        _language = selectedLanguage;
+        _preferredLanguageCode = selectedCode;
+      });
+      return;
+    }
+
+    final message = (result['message']?.toString().trim().isNotEmpty ?? false)
+        ? result['message'].toString()
+        : 'Failed to update language.';
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   Future<void> _loadAvatar() async {
@@ -304,10 +387,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
         const SizedBox(height: 18),
-        const Text(
-          'Vihangi Ranasinghe',
+        Text(
+          _fullName,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             color: ErisColors.textPrimary,
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -315,9 +398,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const SizedBox(height: 6),
         Text(
-          'vihangi123@gmail.com',
+          _email,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             color: ErisColors.textSecondary,
             fontSize: 15,
           ),
@@ -347,15 +430,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          _infoField('FULL NAME', 'Vihangi Ranasinghe'),
+          _infoField('FULL NAME', _fullName),
           const SizedBox(height: 16),
-          _infoField('PHONE', '+94 77 123 4567'),
+          _infoField('PHONE', _phoneNumber),
           const SizedBox(height: 16),
-          _infoField('EMAIL ADDRESS', 'vihangi123@gmail.com'),
+          _infoField('EMAIL ADDRESS', _email),
           const SizedBox(height: 16),
           _infoField(
             'RESIDENTIAL ADDRESS',
-            'No 45, Marine Drive, Colombo 03, Sri Lanka',
+            _district,
           ),
         ],
       ),
@@ -516,7 +599,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       DropdownMenuItem(value: 'Sinhala', child: Text('Sinhala')),
                     ],
                     onChanged: (v) {
-                      if (v != null) setState(() => _language = v);
+                      if (v != null && v != _language) {
+                        _updatePreferredLanguage(v);
+                      }
                     },
                   ),
                 ),
