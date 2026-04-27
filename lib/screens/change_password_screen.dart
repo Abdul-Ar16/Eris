@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
 import '../theme/app_theme.dart';
 
 /// Change Password screen — styled to match the Eris dark design system.
@@ -11,6 +12,7 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
+  final AuthService _authService = AuthService();
 
   final _currentPwCtrl = TextEditingController();
   final _newPwCtrl = TextEditingController();
@@ -64,10 +66,35 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 
   // ── Submit ───────────────────────────────────────────────────────────────
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // TODO: wire to actual auth layer
+    final result = await _authService.changePassword(
+      currentPassword: _currentPwCtrl.text,
+      newPassword: _newPwCtrl.text,
+    );
+    if (!mounted) return;
+    if (result['success'] != true) {
+      final message = (result['message']?.toString().trim().isNotEmpty ?? false)
+          ? result['message'].toString()
+          : 'Failed to update password.';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error_outline_rounded, color: Colors.white, size: 20),
+              const SizedBox(width: 10),
+              Expanded(child: Text(message)),
+            ],
+          ),
+          backgroundColor: ErisColors.danger,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Row(
