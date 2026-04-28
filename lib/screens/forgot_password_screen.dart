@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
-
+import '../services/auth_service.dart';
 /// ──────────────────────────────────────────────────────────────────────────
 ///  Forgot-Password Flow — 3 steps:
 ///    1. Enter registered email
@@ -90,9 +90,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   // ── Step 1: Send OTP ──────────────────────────────────────────────────────
   void _sendOtp() {
     if (!_emailFormKey.currentState!.validate()) return;
-    // TODO: trigger real OTP via auth backend
-    _startResendTimer();
-    _goTo(1);
+    // For now, skip OTP verification and go straight to password reset
+    _goTo(2);
   }
 
   // ── Step 2: Verify OTP ────────────────────────────────────────────────────
@@ -128,11 +127,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     });
   }
 
-  // ── Step 3: Reset password ────────────────────────────────────────────────
-  void _resetPassword() {
+  void _resetPassword() async {
     if (!_newPwFormKey.currentState!.validate()) return;
-    // TODO: call auth backend to update password
-    _showSuccess();
+
+    final authService = AuthService();
+    final result = await authService.resetPassword(
+      email: _emailCtrl.text.trim(),
+      newPassword: _newPwCtrl.text,
+    );
+
+    if (result['success'] == true) {
+      _showSuccess();
+    } else {
+      _showError(result['message'] ?? 'Failed to reset password');
+    }
   }
 
   void _showError(String msg) {

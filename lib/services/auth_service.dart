@@ -189,7 +189,7 @@ class AuthService {
   // ── Reset Password ──────────────────────────────────────────────────────
   Future<Map<String, dynamic>> resetPassword({
     required String email,
-    required String resetToken,
+    String? resetToken,
     required String newPassword,
   }) async {
     try {
@@ -199,7 +199,7 @@ class AuthService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email,
-          'resetToken': resetToken,
+          if (resetToken != null) 'resetToken': resetToken,
           'newPassword': newPassword,
         }),
       );

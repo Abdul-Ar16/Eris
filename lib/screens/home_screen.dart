@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
           SliverAppBar(
             floating: true,
             pinned: true,
-            expandedHeight: 120,
+            expandedHeight: 80,
             backgroundColor: ErisColors.background,
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -26,17 +26,6 @@ class HomeScreen extends StatelessWidget {
               ),
               centerTitle: false,
             ),
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.notifications_none_rounded),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.settings_outlined),
-              ),
-              const SizedBox(width: 8),
-            ],
           ),
           SliverPadding(
             padding: const EdgeInsets.all(20),
