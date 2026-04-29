@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../services/notification_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -70,6 +71,21 @@ class HomeScreen extends StatelessWidget {
                   ),
                   icon: const Icon(Icons.warning_amber_rounded),
                   label: const Text('SOS EMERGENCY'),
+                ),
+                const SizedBox(height: 16),
+                // Test Notification Button
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    await NotificationService().showNotification(
+                      title: 'Evacuation Warning',
+                      body: 'Your area is under danger and evacuation is needed.',
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ErisColors.primary,
+                  ),
+                  icon: const Icon(Icons.notifications_active),
+                  label: const Text('TEST NOTIFICATION'),
                 ),
                 const SizedBox(height: 40),
               ]),
