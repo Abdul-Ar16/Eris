@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import '../services/evacuation_service.dart';
 import '../theme/app_theme.dart';
 
 class MapViewScreen extends StatefulWidget {
@@ -12,20 +16,126 @@ class MapViewScreen extends StatefulWidget {
 
 class _MapViewScreenState extends State<MapViewScreen> {
   final MapController _mapController = MapController();
-  
-  // Hardcoded center for Colombo
-  final LatLng _center = const LatLng(6.9271, 79.8612);
+  final EvacuationService _evacuationService = EvacuationService();
+  static const LatLng _fallbackCenter = LatLng(6.9271, 79.8612);
+
+  LatLng _userLocation = _fallbackCenter;
+  List<ShelterLocation> _shelters = [];
+  ShelterLocation? _selectedShelter;
+  List<LatLng> _routePoints = [];
+  StreamSubscription<Position>? _positionSubscription;
+  bool _isNavigating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _shelters = _evacuationService.getShelters(district: 'Colombo');
+    if (_shelters.isNotEmpty) {
+      _selectedShelter = _shelters.first;
+      _rebuildRoute();
+    }
+    _startLiveTracking();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final routeArgs = ModalRoute.of(context)?.settings.arguments;
+    if (routeArgs is Map<String, dynamic>) {
+      final shelterId = routeArgs['shelterId']?.toString();
+      if (shelterId != null) {
+        final selected = _evacuationService.getShelterById(shelterId);
+        if (selected != null && selected.id != _selectedShelter?.id) {
+          setState(() {
+            _selectedShelter = selected;
+            _rebuildRoute();
+          });
+        }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _positionSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _startLiveTracking() async {
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return;
+
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      return;
+    }
+
+    final current = await Geolocator.getCurrentPosition();
+    if (!mounted) return;
+
+    setState(() {
+      _userLocation = LatLng(current.latitude, current.longitude);
+      _rebuildRoute();
+    });
+
+    _mapController.move(_userLocation, 14.0);
+
+    _positionSubscription = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.bestForNavigation,
+        distanceFilter: 8,
+      ),
+    ).listen((position) {
+      if (!mounted) return;
+      setState(() {
+        _userLocation = LatLng(position.latitude, position.longitude);
+        _rebuildRoute();
+      });
+      if (_isNavigating) {
+        _mapController.move(_userLocation, _mapController.camera.zoom);
+      }
+    });
+  }
+
+  void _rebuildRoute() {
+    final shelter = _selectedShelter;
+    if (shelter == null) {
+      _routePoints = [];
+      return;
+    }
+    _routePoints = _evacuationService.buildNavigationRoute(
+      from: _userLocation,
+      to: shelter,
+    );
+  }
+
+  void _selectShelter(ShelterLocation shelter) {
+    setState(() {
+      _selectedShelter = shelter;
+      _rebuildRoute();
+    });
+    _mapController.move(LatLng(shelter.latitude, shelter.longitude), 14.8);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final selectedShelter = _selectedShelter;
+    final distanceLabel = selectedShelter == null
+        ? '--'
+        : selectedShelter.distanceFrom(_userLocation);
+    final durationLabel = selectedShelter?.time ?? '--';
+
     return Scaffold(
       body: Stack(
         children: [
-          // Real Map using flutter_map
           FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              initialCenter: _center,
+              initialCenter: _userLocation,
               initialZoom: 14.0,
             ),
             children: [
@@ -36,9 +146,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
               ),
               MarkerLayer(
                 markers: [
-                  // User Location Marker
                   Marker(
-                    point: _center,
+                    point: _userLocation,
                     width: 40,
                     height: 40,
                     child: const Icon(
@@ -47,20 +156,35 @@ class _MapViewScreenState extends State<MapViewScreen> {
                       size: 30,
                     ),
                   ),
-                  // Shelter Marker
-                  Marker(
-                    point: const LatLng(6.915, 79.875),
-                    width: 40,
-                    height: 40,
-                    child: const Icon(
-                      Icons.home_rounded,
-                      color: ErisColors.success,
-                      size: 30,
+                  ..._shelters.map(
+                    (shelter) => Marker(
+                      point: LatLng(shelter.latitude, shelter.longitude),
+                      width: 44,
+                      height: 44,
+                      child: GestureDetector(
+                        onTap: () => _selectShelter(shelter),
+                        child: Icon(
+                          Icons.home_rounded,
+                          color: shelter.id == selectedShelter?.id
+                              ? ErisColors.primary
+                              : ErisColors.success,
+                          size: 30,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-              // Example Circle Layer for Risk Area
+              if (_routePoints.length >= 2)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: _routePoints,
+                      strokeWidth: 5,
+                      color: ErisColors.primary,
+                    ),
+                  ],
+                ),
               CircleLayer(
                 circles: [
                   CircleMarker(
@@ -149,7 +273,7 @@ class _MapViewScreenState extends State<MapViewScreen> {
                 _MapActionButton(
                   icon: Icons.my_location_rounded, 
                   onPressed: () {
-                    _mapController.move(_center, 14.0);
+                    _mapController.move(_userLocation, 14.0);
                   }
                 ),
                 const SizedBox(height: 12),
@@ -203,16 +327,16 @@ class _MapViewScreenState extends State<MapViewScreen> {
                         child: const Icon(Icons.navigation_rounded, color: ErisColors.success),
                       ),
                       const SizedBox(width: 16),
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Fastest Route to Shelter',
+                              selectedShelter?.title ?? 'Select a Shelter',
                               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             Text(
-                              '1.2 km • 14 mins via Flower Rd',
+                              '$distanceLabel • $durationLabel',
                               style: TextStyle(color: Colors.white54, fontSize: 13),
                             ),
                           ],
@@ -222,12 +346,21 @@ class _MapViewScreenState extends State<MapViewScreen> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: selectedShelter == null
+                        ? null
+                        : () {
+                            setState(() {
+                              _isNavigating = !_isNavigating;
+                            });
+                            if (_isNavigating) {
+                              _mapController.move(_userLocation, 15.0);
+                            }
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ErisColors.primary,
                       minimumSize: const Size(double.infinity, 50),
                     ),
-                    child: const Text('START NAVIGATION'),
+                    child: Text(_isNavigating ? 'STOP NAVIGATION' : 'START NAVIGATION'),
                   ),
                 ],
               ),

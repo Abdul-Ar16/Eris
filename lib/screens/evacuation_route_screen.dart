@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
+import '../services/evacuation_service.dart';
 import '../theme/app_theme.dart';
 
 class EvacuationRouteScreen extends StatelessWidget {
@@ -6,6 +8,10 @@ class EvacuationRouteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final evacuationService = EvacuationService();
+    final userReferencePoint = const LatLng(6.9271, 79.8612);
+    final shelters = evacuationService.getNearestShelters(userReferencePoint, limit: 6);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('EVACUATION ROUTES'),
@@ -19,7 +25,11 @@ class EvacuationRouteScreen extends StatelessWidget {
         children: [
           // Map Preview
           GestureDetector(
-            onTap: () => Navigator.pushNamed(context, '/map'),
+            onTap: () => Navigator.pushNamed(
+              context,
+              '/map',
+              arguments: {'shelterId': shelters.isNotEmpty ? shelters.first.id : null},
+            ),
             child: Container(
               height: 240,
               decoration: BoxDecoration(
@@ -95,25 +105,26 @@ class EvacuationRouteScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           
-          _ShelterCard(
-            title: 'Narahanpita High School',
-            type: 'Primary Shelter',
-            capacity: '450/500 available',
-            distance: '1.2 km',
-            time: '15 mins walk',
-            status: 'SAFE ROUTE',
-            statusColor: ErisColors.success,
-          ),
-          const SizedBox(height: 16),
-          _ShelterCard(
-            title: 'City Community Center',
-            type: 'Emergency Shelter',
-            capacity: '120/300 available',
-            distance: '2.8 km',
-            time: '8 mins drive',
-            status: 'CONGESTED',
-            statusColor: ErisColors.warning,
-          ),
+          ...shelters.map((shelter) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _ShelterCard(
+                title: shelter.title,
+                type: shelter.type,
+                capacity: shelter.capacity,
+                distance: shelter.distanceFrom(userReferencePoint),
+                time: shelter.time,
+                status: shelter.status,
+                statusColor:
+                    shelter.isSafeRoute ? ErisColors.success : ErisColors.warning,
+                onGetDirections: () => Navigator.pushNamed(
+                  context,
+                  '/map',
+                  arguments: {'shelterId': shelter.id},
+                ),
+              ),
+            );
+          }),
           const SizedBox(height: 24),
           
           Container(
@@ -159,6 +170,7 @@ class _ShelterCard extends StatelessWidget {
   final String time;
   final String status;
   final Color statusColor;
+  final VoidCallback onGetDirections;
 
   const _ShelterCard({
     required this.title,
@@ -168,6 +180,7 @@ class _ShelterCard extends StatelessWidget {
     required this.time,
     required this.status,
     required this.statusColor,
+    required this.onGetDirections,
   });
 
   @override
@@ -218,7 +231,7 @@ class _ShelterCard extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: () {},
+            onTap: onGetDirections,
             borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
             child: Container(
               width: double.infinity,
