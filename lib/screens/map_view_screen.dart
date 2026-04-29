@@ -1,22 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../theme/app_theme.dart';
 
-class MapViewScreen extends StatelessWidget {
+class MapViewScreen extends StatefulWidget {
   const MapViewScreen({super.key});
+
+  @override
+  State<MapViewScreen> createState() => _MapViewScreenState();
+}
+
+class _MapViewScreenState extends State<MapViewScreen> {
+  final MapController _mapController = MapController();
+  
+  // Hardcoded center for Colombo
+  final LatLng _center = const LatLng(6.9271, 79.8612);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // Mock Map Background
-          Positioned.fill(
-            child: Container(
-              color: const Color(0xFF0D1117), // Deep space blue/black for map
-              child: CustomPaint(
-                painter: _MapPainter(),
-              ),
+          // Real Map using flutter_map
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: _center,
+              initialZoom: 14.0,
             ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                subdomains: const ['a', 'b', 'c', 'd'],
+                userAgentPackageName: 'com.example.eris',
+              ),
+              MarkerLayer(
+                markers: [
+                  // User Location Marker
+                  Marker(
+                    point: _center,
+                    width: 40,
+                    height: 40,
+                    child: const Icon(
+                      Icons.my_location_rounded,
+                      color: ErisColors.primary,
+                      size: 30,
+                    ),
+                  ),
+                  // Shelter Marker
+                  Marker(
+                    point: const LatLng(6.915, 79.875),
+                    width: 40,
+                    height: 40,
+                    child: const Icon(
+                      Icons.home_rounded,
+                      color: ErisColors.success,
+                      size: 30,
+                    ),
+                  ),
+                ],
+              ),
+              // Example Circle Layer for Risk Area
+              CircleLayer(
+                circles: [
+                  CircleMarker(
+                    point: const LatLng(6.935, 79.855),
+                    color: ErisColors.riskHigh.withOpacity(0.3),
+                    borderStrokeWidth: 2,
+                    borderColor: ErisColors.riskHigh,
+                    useRadiusInMeter: true,
+                    radius: 500,
+                  ),
+                ],
+              ),
+            ],
           ),
 
           // Top Navigation
@@ -89,10 +146,25 @@ class MapViewScreen extends StatelessWidget {
               children: [
                 _MapActionButton(icon: Icons.layers_rounded, onPressed: () {}),
                 const SizedBox(height: 12),
-                _MapActionButton(icon: Icons.my_location_rounded, onPressed: () {}),
+                _MapActionButton(
+                  icon: Icons.my_location_rounded, 
+                  onPressed: () {
+                    _mapController.move(_center, 14.0);
+                  }
+                ),
                 const SizedBox(height: 12),
-                _MapActionButton(icon: Icons.zoom_in_rounded, onPressed: () {}),
-                _MapActionButton(icon: Icons.zoom_out_rounded, onPressed: () {}),
+                _MapActionButton(
+                  icon: Icons.zoom_in_rounded, 
+                  onPressed: () {
+                    _mapController.move(_mapController.camera.center, _mapController.camera.zoom + 1);
+                  }
+                ),
+                _MapActionButton(
+                  icon: Icons.zoom_out_rounded, 
+                  onPressed: () {
+                    _mapController.move(_mapController.camera.center, _mapController.camera.zoom - 1);
+                  }
+                ),
               ],
             ),
           ),
@@ -228,55 +300,4 @@ class _FilterChip extends StatelessWidget {
       ),
     );
   }
-}
-
-class _MapPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withOpacity(0.03)
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
-
-    // Grid lines
-    for (double i = 0; i < size.width; i += 40) {
-      canvas.drawLine(Offset(i, 0), Offset(i, size.height), paint);
-    }
-    for (double i = 0; i < size.height; i += 40) {
-      canvas.drawLine(Offset(0, i), Offset(size.width, i), paint);
-    }
-
-    // Main Roads
-    final roadPaint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
-      ..strokeWidth = 3.0
-      ..style = PaintingStyle.stroke;
-
-    final path = Path();
-    path.moveTo(size.width * 0.2, 0);
-    path.lineTo(size.width * 0.3, size.height * 0.4);
-    path.quadraticBezierTo(size.width * 0.4, size.height * 0.6, size.width * 0.8, size.height);
-
-    path.moveTo(0, size.height * 0.3);
-    path.lineTo(size.width, size.height * 0.25);
-
-    canvas.drawPath(path, roadPaint);
-
-    // Hazard Area
-    final hazardPaint = Paint()
-      ..color = ErisColors.riskHigh.withOpacity(0.15)
-      ..style = PaintingStyle.fill;
-    
-    canvas.drawCircle(Offset(size.width * 0.7, size.height * 0.4), 80, hazardPaint);
-    
-    // Markers
-    final markerPaint = Paint()..color = ErisColors.primary;
-    canvas.drawCircle(Offset(size.width * 0.3, size.height * 0.4), 6, markerPaint);
-    
-    final shelterPaint = Paint()..color = ErisColors.success;
-    canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.8), 8, shelterPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
