@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/avatar_notifier.dart';
+import '../services/auth_service.dart';
 import '../theme/app_theme.dart';
 import 'profile_screen.dart';
 
@@ -14,9 +16,46 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final AuthService _authService = AuthService();
   bool _pushNotifications = true;
   bool _criticalSound = true;
   bool _smsAlerts = false;
+  
+  String _userName = 'User Name';
+  String _userEmail = 'email@example.com';
+  String _initials = 'U';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('user_name') ?? 'User Name';
+    final email = prefs.getString('user_email') ?? 'email@example.com';
+    
+    // Generate initials from name
+    String initials = '';
+    final trimmedName = name.trim();
+    if (trimmedName.isNotEmpty) {
+      final parts = trimmedName.split(RegExp(r'\s+'));
+      if (parts.length >= 2) {
+        initials = (parts.first[0] + parts.last[0]).toUpperCase();
+      } else if (parts.first.isNotEmpty) {
+        initials = parts.first[0].toUpperCase();
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        _userName = name;
+        _userEmail = email;
+        _initials = initials.isEmpty ? 'U' : initials;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _sectionHeader('SYSTEM & SAFETY'),
                   _systemSafetyCard(context),
                   const SizedBox(height: 28),
-                  Center(
+                  const Center(
                     child: Text(
                       'ERIS DISASTER RESPONSE SYSTEM V4.2.0',
                       textAlign: TextAlign.center,
@@ -125,9 +164,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     backgroundImage:
                         path != null ? FileImage(File(path)) : null,
                     child: path == null
-                        ? const Text(
-                            'VR',
-                            style: TextStyle(
+                        ? Text(
+                            _initials,
+                            style: const TextStyle(
                               color: ErisColors.primaryLight,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -138,22 +177,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
               const SizedBox(width: 14),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Vihangi Ranasinghe',
-                      style: TextStyle(
+                      _userName,
+                      style: const TextStyle(
                         color: ErisColors.textPrimary,
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      'vihangi123@gmail.com',
-                      style: TextStyle(
+                      _userEmail,
+                      style: const TextStyle(
                         color: ErisColors.textSecondary,
                         fontSize: 13,
                       ),
@@ -162,12 +201,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               TextButton(
-                onPressed: () {
-                  Navigator.of(context).push<void>(
+                onPressed: () async {
+                  await Navigator.of(context).push<void>(
                     MaterialPageRoute<void>(
                       builder: (_) => const ProfileScreen(),
                     ),
                   );
+                  // Refresh data when returning from profile screen
+                  _loadUserData();
                 },
                 child: const Text(
                   'Edit Profile',
@@ -398,101 +439,80 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          // TextButton(
-          //   onPressed: () {
-          //     ScaffoldMessenger.of(context).showSnackBar(
-          //       const SnackBar(content: Text('Add contact coming soon')),
-          //     );
-          //   },
-          //   child: const Text(
-          //     '+ Add New',
-          //     style: TextStyle(
-          //       color: ErisColors.primary,
-          //       fontWeight: FontWeight.w700,
-          //       fontSize: 13,
-          //     ),
-          //   ),
-          // ),
+          GestureDetector(
+            onTap: () {
+              // Add contact logic
+            },
+            child: const Text(
+              'Manage',
+              style: TextStyle(
+                color: ErisColors.primary,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _emergencyCard() {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {},
-        borderRadius: BorderRadius.circular(16),
-        child: _card(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 22,
-                    backgroundColor: ErisColors.primary,
-                    child: const Text(
-                      'SS',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Text(
-                              'Abdul Raheem',
-                              style: TextStyle(
-                                color: ErisColors.textPrimary,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: ErisColors.warning.withValues(alpha: 0.25),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: const Text(
-                                'PRIMARY',
-                                style: TextStyle(
-                                  color: ErisColors.warning,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '+94 77 2358 580',
-                          style: TextStyle(
-                            color: ErisColors.textSecondary,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(Icons.chevron_right_rounded, color: Colors.white24),
-                ],
-              ),
+    return _card(
+      children: [
+        _contactItem('Home (Mom)', '077 123 4567', true),
+        const Divider(height: 1, color: Colors.white10),
+        _contactItem('Emergency Services', '119', false),
+      ],
+    );
+  }
+
+  Widget _contactItem(String label, String phone, bool showBadge) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: ErisColors.surfaceVariant,
+              borderRadius: BorderRadius.circular(10),
             ),
-          ],
-        ),
+            child: const Icon(Icons.person_outline, color: ErisColors.textSecondary, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      label,
+                      style: const TextStyle(color: ErisColors.textPrimary, fontWeight: FontWeight.bold),
+                    ),
+                    if (showBadge) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: ErisColors.primary.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'PRIMARY',
+                          style: TextStyle(color: ErisColors.primary, fontSize: 8, fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                Text(phone, style: const TextStyle(color: ErisColors.textSecondary, fontSize: 13)),
+              ],
+            ),
+          ),
+          const Icon(Icons.chevron_right, color: Colors.white24, size: 18),
+        ],
       ),
     );
   }
@@ -502,55 +522,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
       children: [
         _systemRow(
           icon: Icons.shield_outlined,
-          iconColor: ErisColors.primary,
-          title: 'System Health Check',
-          trailing: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: ErisColors.success.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Text(
-              'OPTIMAL',
-              style: TextStyle(
-                color: ErisColors.success,
-                fontSize: 10,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.6,
-              ),
-            ),
-          ),
-          showDivider: true,
+          title: 'Safety Check Protocol',
           onTap: () {},
         ),
+        const Divider(height: 1, color: Colors.white10),
         _systemRow(
-          icon: Icons.description_outlined,
-          iconColor: ErisColors.textSecondary,
-          title: 'Privacy Policy',
-          trailing: const Icon(Icons.open_in_new_rounded, color: ErisColors.textTertiary, size: 20),
-          showDivider: true,
-          onTap: () => Navigator.of(context).pushNamed('/privacy-policy'),
+          icon: Icons.help_outline_rounded,
+          title: 'Help & Support Center',
+          onTap: () {},
         ),
-        InkWell(
-          onTap: () => Navigator.of(context).pushReplacementNamed('/login'),
-          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(
-              children: [
-                const Icon(Icons.logout_rounded, color: ErisColors.danger, size: 22),
-                const SizedBox(width: 14),
-                Text(
-                  'Log Out',
-                  style: TextStyle(
-                    color: ErisColors.danger,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+        const Divider(height: 1, color: Colors.white10),
+        _systemRow(
+          icon: Icons.logout_rounded,
+          title: 'Logout',
+          titleColor: Colors.redAccent,
+          onTap: () async {
+            // Confirm logout
+            final confirm = await showDialog<bool>(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                backgroundColor: ErisColors.surface,
+                title: const Text('Logout', style: TextStyle(color: Colors.white)),
+                content: const Text('Are you sure you want to logout?', style: TextStyle(color: Colors.white70)),
+                actions: [
+                  TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx, true),
+                    child: const Text('Logout', style: TextStyle(color: Colors.redAccent)),
                   ),
-                ),
-              ],
-            ),
-          ),
+                ],
+              ),
+            );
+
+            if (confirm == true) {
+              await _authService.logout();
+              if (mounted) {
+                Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+              }
+            }
+          },
         ),
       ],
     );
@@ -558,39 +568,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _systemRow({
     required IconData icon,
-    required Color iconColor,
     required String title,
-    required Widget trailing,
-    required bool showDivider,
+    Color titleColor = ErisColors.textPrimary,
     required VoidCallback onTap,
   }) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(
-              children: [
-                Icon(icon, color: iconColor, size: 22),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      color: ErisColors.textPrimary,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                trailing,
-              ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+        child: Row(
+          children: [
+            Icon(icon, color: titleColor.withValues(alpha: 0.7), size: 22),
+            const SizedBox(width: 14),
+            Text(
+              title,
+              style: TextStyle(color: titleColor, fontSize: 15, fontWeight: FontWeight.w600),
             ),
-          ),
+            const Spacer(),
+            const Icon(Icons.chevron_right, color: Colors.white24, size: 20),
+          ],
         ),
-        if (showDivider) const Divider(height: 1, color: Colors.white10),
-      ],
+      ),
     );
   }
 }
