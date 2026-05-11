@@ -323,9 +323,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               _buildStrengthBar(false),
               _buildStrengthBar(false),
               const SizedBox(width: 8),
-              const Text('MODERATE STRENGTH', style: TextStyle(color: ErisColors.primary, fontSize: 10, fontWeight: FontWeight.bold)),
-              const Spacer(),
-              const Text('Add symbols', style: TextStyle(color: Colors.white38, fontSize: 10)),
+              // Wrap the label in Expanded to allow it to shrink/wrap if needed
+              const Expanded(
+                child: Text(
+                  'MODERATE STRENGTH',
+                  style: TextStyle(
+                    color: ErisColors.primary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis, // Prevents overflow by adding '...'
+                ),
+              ),
+              const SizedBox(width: 8), // Replaced Spacer() with a fixed gap to ensure the hint stays visible
+              Expanded(
+                child: const Text(
+                  'Add symbols',
+                  style: TextStyle(color: Colors.white38, fontSize: 10),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -952,10 +969,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const Text(
-                  'Emergency Contact',
-                  style: TextStyle(color: ErisColors.textPrimary, fontSize: 28, fontWeight: FontWeight.bold),
+                const Expanded( // 1. Wrap the large text in Expanded
+                  child: Text(
+                    'Emergency Contact',
+                    style: TextStyle(
+                      color: ErisColors.textPrimary,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    softWrap: true, // Allows wrapping to a new line
+                  ),
                 ),
+                const SizedBox(width: 8), // 2. Add a small gap between the two
                 Text(
                   '80% Complete',
                   style: TextStyle(color: ErisColors.textSecondary, fontSize: 12),
