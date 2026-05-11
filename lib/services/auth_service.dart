@@ -38,6 +38,9 @@ class AuthService {
     required String password,
     required String phoneNumber,
     required String district,
+    String? emergencyContactName,
+    String? emergencyContactPhone,
+    String? emergencyContactRelationship,
   }) async {
     try {
       final url = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.registerEndpoint}');
@@ -52,6 +55,12 @@ class AuthService {
           'district': district,
           'role': 'USER',
           'isActive': true,
+          if (emergencyContactName != null && emergencyContactName.isNotEmpty)
+            'emergencyContactName': emergencyContactName,
+          if (emergencyContactPhone != null && emergencyContactPhone.isNotEmpty)
+            'emergencyContactPhone': emergencyContactPhone,
+          if (emergencyContactRelationship != null && emergencyContactRelationship.isNotEmpty)
+            'emergencyContactRelationship': emergencyContactRelationship,
         }),
       );
 

@@ -25,6 +25,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _phoneNumber = '-';
   String _district = '-';
   String? _preferredLanguageCode;
+  // Emergency contact
+  String _emergencyContactName = '-';
+  String _emergencyContactPhone = '-';
+  String _emergencyContactRelationship = '-';
 
   static const _kAvatarKey = 'profile_avatar_path';
 
@@ -58,6 +62,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _district = (data['district'] ?? _district).toString();
       _preferredLanguageCode = langCode;
       _language = _languageFromCode(langCode);
+      // Emergency contact — show dash if not set yet
+      final ecName = data['emergencyContactName'];
+      final ecPhone = data['emergencyContactPhone'];
+      final ecRel = data['emergencyContactRelationship'];
+      _emergencyContactName = (ecName != null && ecName.toString().isNotEmpty) ? ecName.toString() : '-';
+      _emergencyContactPhone = (ecPhone != null && ecPhone.toString().isNotEmpty) ? ecPhone.toString() : '-';
+      _emergencyContactRelationship = (ecRel != null && ecRel.toString().isNotEmpty) ? ecRel.toString() : '-';
     });
   }
 
@@ -313,6 +324,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 28),
             _buildPersonalInfoCard(),
             const SizedBox(height: 16),
+            _buildEmergencyContactCard(),
+            const SizedBox(height: 16),
             _buildActivityCard(),
             const SizedBox(height: 16),
             _buildPreferencesCard(),
@@ -469,6 +482,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildEmergencyContactCard() {
+    return _profileCard(
+      color: ErisColors.surface,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.emergency_rounded, color: ErisColors.danger, size: 22),
+              const SizedBox(width: 8),
+              const Text(
+                'Emergency Contact',
+                style: TextStyle(
+                  color: ErisColors.textPrimary,
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _infoField('FULL NAME', _emergencyContactName),
+          const SizedBox(height: 16),
+          _infoField('RELATIONSHIP', _emergencyContactRelationship),
+          const SizedBox(height: 16),
+          _infoField('MOBILE NUMBER', _emergencyContactPhone),
+        ],
+      ),
     );
   }
 

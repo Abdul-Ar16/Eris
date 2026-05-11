@@ -125,6 +125,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         password: _passwordController.text.trim(),
         phoneNumber: '$_countryCode${_phoneController.text.trim()}',
         district: _selectedDistrict ?? 'Unknown',
+        emergencyContactName: _emergencyNameController.text.trim(),
+        emergencyContactPhone: _emergencyPhoneController.text.trim(),
+        emergencyContactRelationship: _emergencyRelationship,
       );
 
       setState(() => _isLoading = false);
