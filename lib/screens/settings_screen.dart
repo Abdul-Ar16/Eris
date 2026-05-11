@@ -20,10 +20,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _pushNotifications = true;
   bool _criticalSound = true;
   bool _smsAlerts = false;
-  
+
   String _userName = 'User Name';
   String _userEmail = 'email@example.com';
   String _initials = 'U';
+
+  // Emergency contact (loaded from DB via profile API)
+  String _emergencyName = '-';
+  String _emergencyPhone = '-';
+  String _emergencyRelationship = '-';
 
   @override
   void initState() {
@@ -35,7 +40,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     final name = prefs.getString('user_name') ?? 'User Name';
     final email = prefs.getString('user_email') ?? 'email@example.com';
-    
+
     // Generate initials from name
     String initials = '';
     final trimmedName = name.trim();
@@ -53,6 +58,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _userName = name;
         _userEmail = email;
         _initials = initials.isEmpty ? 'U' : initials;
+      });
+    }
+
+    // Load emergency contact from the profile API
+    final result = await _authService.getProfile();
+    if (!mounted) return;
+    if (result['success'] == true && result['data'] != null) {
+      final data = result['data'] as Map<String, dynamic>;
+      final ecName = data['emergencyContactName'];
+      final ecPhone = data['emergencyContactPhone'];
+      final ecRel  = data['emergencyContactRelationship'];
+      setState(() {
+        _emergencyName         = (ecName  != null && ecName.toString().isNotEmpty)  ? ecName.toString()  : '-';
+        _emergencyPhone        = (ecPhone != null && ecPhone.toString().isNotEmpty) ? ecPhone.toString() : '-';
+        _emergencyRelationship = (ecRel   != null && ecRel.toString().isNotEmpty)   ? ecRel.toString()   : '-';
       });
     }
   }
@@ -460,14 +480,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _emergencyCard() {
     return _card(
       children: [
-        _contactItem('Home (Mom)', '077 123 4567', true),
-        const Divider(height: 1, color: Colors.white10),
-        _contactItem('Emergency Services', '119', false),
+        _contactItem(
+          label: _emergencyName,
+          subtitle: _emergencyRelationship,
+          phone: _emergencyPhone,
+          isPrimary: true,
+        ),
       ],
     );
   }
 
-  Widget _contactItem(String label, String phone, bool showBadge) {
+  Widget _contactItem({
+    required String label,
+    required String subtitle,
+    required String phone,
+    bool isPrimary = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       child: Row(
@@ -487,11 +515,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 Row(
                   children: [
-                    Text(
-                      label,
-                      style: const TextStyle(color: ErisColors.textPrimary, fontWeight: FontWeight.bold),
+                    Flexible(
+                      child: Text(
+                        label,
+                        style: const TextStyle(color: ErisColors.textPrimary, fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    if (showBadge) ...[
+                    if (isPrimary) ...[
                       const SizedBox(width: 6),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -507,7 +538,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ],
                   ],
                 ),
-                Text(phone, style: const TextStyle(color: ErisColors.textSecondary, fontSize: 13)),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: const TextStyle(color: ErisColors.textSecondary, fontSize: 12),
+                ),
+                Text(
+                  phone,
+                  style: const TextStyle(color: ErisColors.textSecondary, fontSize: 13),
+                ),
               ],
             ),
           ),
