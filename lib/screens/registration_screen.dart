@@ -24,8 +24,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool _prefCriticalAudio = true;
 
   // Phase 4 — Emergency contact
-  final _emergencyNameController = TextEditingController(text: 'Abdul Raheem');
-  final _emergencyPhoneController = TextEditingController(text: '+94 72 77564 339');
+  final _emergencyNameController = TextEditingController(text: '');
+  final _emergencyPhoneController = TextEditingController(text: '');
   String _emergencyRelationship = 'Partner';
   bool _notifyHighAlerts = true;
   bool _shareLocationEmergency = false;
