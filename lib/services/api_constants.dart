@@ -3,7 +3,7 @@ class ApiConstants {
   // static const String baseUrl = 'http://10.0.2.2:8080/api';
 
   // If using a physical device, change this to the computer's local IP address (e.g., http://192.168.1.5:8080/api)
-  static const String baseUrl = 'http://192.168.8.155:8080/api';
+  static const String baseUrl = 'https://eris-backend-bepl.onrender.com/api';
 
 
   // ── Auth ─────────────────────────────────────────────────
@@ -53,4 +53,9 @@ class ApiConstants {
 
   // ── Weather Data ─────────────────────────────────────────
   static const String weatherEndpoint = '/weather';
+
+  // ── ML Predictions (Random Forest) ───────────────────────
+  static const String mlPredictionEndpoint = '/ml/prediction';
+  static const String mlPredictionLatestEndpoint = '/ml/prediction/latest';
+  static const String mlPredictionHistoryEndpoint = '/ml/prediction/history';
 }
